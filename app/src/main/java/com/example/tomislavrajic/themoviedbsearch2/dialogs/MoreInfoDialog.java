@@ -28,7 +28,7 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
+//TODO Remove unused imorts
 public class MoreInfoDialog extends Dialog {
 
     private OnIMDBClickedListener onIMDBClickedListener;
@@ -48,6 +48,7 @@ public class MoreInfoDialog extends Dialog {
         super(context);
     }
 
+    //TODO Create method for setting imdb click listener
     public MoreInfoDialog(@NonNull Context context, int themeResId, OnIMDBClickedListener onIMDBClickedListener) {
         super(context, themeResId);
         this.onIMDBClickedListener = onIMDBClickedListener;
@@ -61,9 +62,12 @@ public class MoreInfoDialog extends Dialog {
 
     public void setData(String overview, String posterPath, int voteAverage, int movieID) {
         ButterKnife.bind(this);
+
+        //TODO Why is view binding inside setData()?
         ImageView mPosterPath = findViewById(R.id.iv_show_more_movie);
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
         progressBarUserScore.setProgress(voteAverage);
+        //TODO Use string resources
         if (voteAverage == 0) {
             userScore.setText("NR");
         } else {
@@ -72,6 +76,7 @@ public class MoreInfoDialog extends Dialog {
         if (overview.length() < 500) {
             tvOverview.setText(overview);
         } else {
+            //TODO use maxLines in xml in combination with ellipsize = end
             tvOverview.setText(overview.substring(0, 500) + "...");
         }
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
@@ -79,13 +84,14 @@ public class MoreInfoDialog extends Dialog {
         service.getExternalID(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
             @Override
             public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
+                //TODO Handle unsuccessful response
                 String imdbId = response.body().getImdbId();
                 openIMDB.setOnClickListener(v -> onIMDBClickedListener.onIMDBClicked(imdbId));
             }
 
             @Override
             public void onFailure(Call<ExternalID> call, Throwable t) {
-
+                //TODO Handle no response
             }
         });
     }
