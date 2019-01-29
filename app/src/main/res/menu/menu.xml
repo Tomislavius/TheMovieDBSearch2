@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/watched_movies"
+        android:title="@string/watched_movies"
+        app:showAsAction="never">
+
+    </item>
+
+    <item
+        android:id="@+id/watched_tv_shows"
+        android:title="@string/watched_tv_shows"
+        app:showAsAction="never">
+
+    </item>
+</menu>

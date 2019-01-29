@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/colorPrimaryDark">
+
+    <ImageView
+        android:id="@+id/iv_black_track_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_black_track_right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_bottom_line"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:background="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/iv_black_track_left"
+        app:layout_constraintRight_toLeftOf="@id/iv_black_track_right" />
+
+    <ImageView
+        android:id="@+id/iv_movie"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/iv_bottom_line"
+        app:layout_constraintLeft_toRightOf="@id/iv_black_track_left"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_movie_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="#F5F5F5"
+        android:textSize="16sp"
+        app:layout_constraintLeft_toRightOf="@id/iv_movie"
+        app:layout_constraintRight_toLeftOf="@id/iv_black_track_right"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_release_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:textColor="#F5F5F5"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/iv_movie"
+        app:layout_constraintTop_toBottomOf="@id/tv_movie_title" />
+
+    <TextView
+        android:id="@+id/genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:text="Genre: "
+        android:textColor="#F5F5F5"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/iv_movie"
+        app:layout_constraintTop_toBottomOf="@id/tv_release_date" />
+
+    <TextView
+        android:id="@+id/tv_genre"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="1dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="2dp"
+        android:textColor="#F5F5F5"
+        android:textSize="14sp"
+        app:layout_constraintLeft_toRightOf="@id/genre"
+        app:layout_constraintRight_toLeftOf="@id/iv_black_track_right"
+        app:layout_constraintTop_toBottomOf="@id/tv_release_date" />
+
+    <Button
+        android:id="@+id/bt_more_info"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginBottom="2dp"
+        android:background="@drawable/custom_button_background"
+        android:text="@string/more_info"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/iv_bottom_line"
+        app:layout_constraintLeft_toRightOf="@id/iv_movie"
+        app:layout_constraintRight_toLeftOf="@id/iv_black_track_right" />
+
+    <CheckBox
+        android:buttonTint="@color/colorText"
+        android:id="@+id/cb_watched"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/iv_bottom_line"
+        app:layout_constraintLeft_toRightOf="@id/bt_more_info" />
+
+
+</android.support.constraint.ConstraintLayout>
+
+
