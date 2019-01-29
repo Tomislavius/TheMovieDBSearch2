@@ -61,6 +61,7 @@ public class MoreInfoDialog extends Dialog {
     }
 
     public void setData(String overview, String posterPath, int voteAverage, int movieID) {
+        //TODO Why id butterknife bind in set data?
         ButterKnife.bind(this);
 
         //TODO Why is view binding inside setData()?
