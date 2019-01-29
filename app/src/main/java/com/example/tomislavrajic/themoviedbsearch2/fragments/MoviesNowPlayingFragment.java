@@ -1,8 +1,9 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,11 @@ import retrofit2.Response;
 
 public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecyclerViewAdapter.LoadMoreCallback,
         MoviesRecyclerViewAdapter.MoreInfoClickListener, MoviesRecyclerViewAdapter.OnCheckedChangeListener,
-        MoreInfoDialog.OnIMDBClickedListener{
+        MoreInfoDialog.OnIMDBClickListener {
 
     private int page;
     private MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
+    private MoreInfoDialog moreInfoDialog;
     @BindView(R.id.rv_now_playing_movies)
     RecyclerView mRecyclerView;
 
@@ -71,6 +73,11 @@ public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecy
     }
 
     @Override
+    MoviesRecyclerViewAdapter getAdapter() {
+        return moviesRecyclerViewAdapter;
+    }
+
+    @Override
     public void onLoadMoreClicked() {
         page++;
         loadMovies();
@@ -78,8 +85,9 @@ public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecy
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()),android.R.style.Theme_Black_NoTitleBar_Fullscreen,this);
+        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
 
@@ -94,12 +102,18 @@ public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecy
     }
 
     @Override
-    MoviesRecyclerViewAdapter getAdapter() {
-        return moviesRecyclerViewAdapter;
+    public void onDestroyView() {
+        if (moreInfoDialog != null) {
+            moreInfoDialog.setOnIMDBClickListener(null);
+        }
+        super.onDestroyView();
     }
 
     @Override
     public void onIMDBClicked(String imdbID) {
-
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
+        startActivity(browserIntent);
     }
 }

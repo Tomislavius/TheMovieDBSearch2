@@ -64,15 +64,6 @@ public class MoviesActivity extends AppCompatActivity {
                     if (fragments.get(i) instanceof BaseFragment) {
                         ((BaseFragment) fragments.get(i)).refreshData();
                     }
-//                    if (fragments.get(i) instanceof MoviesNowPlayingFragment) {
-//                        ((MoviesNowPlayingFragment) fragments.get(i)).refreshData();
-//                    } else if (fragments.get(i) instanceof MoviesUpcomingFragment) {
-//                        ((MoviesUpcomingFragment) fragments.get(i)).refreshData();
-//                    } else if (fragments.get(i) instanceof MoviesPopularFragment) {
-//                        ((MoviesPopularFragment) fragments.get(i)).refreshData();
-//                    } else if (fragments.get(i) instanceof MoviesTopRatedFragment) {
-//                        ((MoviesTopRatedFragment) fragments.get(i)).refreshData();
-//                    }
                 }
             }
         }

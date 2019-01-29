@@ -1,6 +1,8 @@
 package com.example.tomislavrajic.themoviedbsearch2;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -20,14 +22,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
-        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickedListener {
+        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickListener {
 
+    private WatchedSharedPreferences watchedSharedPreferences;
+    private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
+    private MoreInfoDialog moreInfoDialog;
     @BindView(R.id.rv_watched_movies)
     RecyclerView mWatchedMoviesRecyclerView;
     @BindView(R.id.tv_empty_layout)
     TextView mEmptyLayout;
-    private WatchedSharedPreferences watchedSharedPreferences;
-    private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +75,17 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen,this);
+        moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
 
     @Override
     public void onIMDBClicked(String imdbID) {
-
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
+        startActivity(browserIntent);
     }
 }

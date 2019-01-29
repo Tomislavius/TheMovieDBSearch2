@@ -3,13 +3,8 @@ package com.example.tomislavrajic.themoviedbsearch2.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -28,11 +23,12 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-//TODO Remove unused imorts
+
 public class MoreInfoDialog extends Dialog {
 
-    private OnIMDBClickedListener onIMDBClickedListener;
+    private OnIMDBClickListener onIMDBClickListener;
 
+    //region View
     @BindView(R.id.bt_dismiss)
     Button dismiss;
     @BindView(R.id.tv_overview)
@@ -43,44 +39,41 @@ public class MoreInfoDialog extends Dialog {
     ProgressBar progressBarUserScore;
     @BindView(R.id.ib_open_imdb)
     ImageButton openIMDB;
+    @BindView(R.id.iv_show_more_movie)
+    ImageView mPosterPath;
+    //endregion
 
+    //region Default constructors
     public MoreInfoDialog(@NonNull Context context) {
         super(context);
         init();
     }
 
-    //TODO Create method for setting imdb click listener
     public MoreInfoDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
-                init();
+        init();
     }
 
     protected MoreInfoDialog(@NonNull Context context, boolean cancelable, @Nullable DialogInterface.OnCancelListener cancelListener) {
         super(context, cancelable, cancelListener);
         init();
     }
+    //endregion
 
-    public void setOnIMDBClickedListener(OnIMDBClickedListener onIMDBClickedListener) {
-        this.onIMDBClickedListener = onIMDBClickedListener;
+    public void setOnIMDBClickListener(OnIMDBClickListener onIMDBClickListener) {
+        this.onIMDBClickListener = onIMDBClickListener;
     }
 
     public void setData(String overview, String posterPath, int voteAverage, int movieID) {
-        //TODO Why is view binding inside setData()?
-        ImageView mPosterPath = findViewById(R.id.iv_show_more_movie);
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
         progressBarUserScore.setProgress(voteAverage);
-        //TODO Use string resources
         if (voteAverage == 0) {
-            userScore.setText("NR");
+            userScore.setText(R.string.not_rated);
         } else {
             userScore.setText(String.valueOf(voteAverage) + "%");
         }
-        if (overview.length() < 500) {
-            tvOverview.setText(overview);
-        } else {
-            //TODO use maxLines in xml in combination with ellipsize = end
-            tvOverview.setText(overview.substring(0, 500) + "...");
-        }
+        tvOverview.setText(overview);
+
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
 
         service.getExternalID(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
@@ -88,7 +81,7 @@ public class MoreInfoDialog extends Dialog {
             public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
                 //TODO Handle unsuccessful response
                 String imdbId = response.body().getImdbId();
-                openIMDB.setOnClickListener(v -> onIMDBClickedListener.onIMDBClicked(imdbId));
+                openIMDB.setOnClickListener(v -> onIMDBClickListener.onIMDBClicked(imdbId));
             }
 
             @Override
@@ -102,12 +95,12 @@ public class MoreInfoDialog extends Dialog {
         setContentView(R.layout.show_more);
         ButterKnife.bind(this);
         dismiss.setOnClickListener(v -> {
-            setOnIMDBClickedListener(null);
+            setOnIMDBClickListener(null);
             dismiss();
         });
     }
 
-    public interface OnIMDBClickedListener {
+    public interface OnIMDBClickListener {
         void onIMDBClicked(String imdbID);
     }
 }
