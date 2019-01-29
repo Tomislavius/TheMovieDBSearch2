@@ -36,8 +36,7 @@ public class MoviesPopularFragment extends BaseFragment implements MoviesRecycle
     private MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     @BindView(R.id.rv_popular_movies)
     RecyclerView mRecyclerView;
-//    MoreInfoDialog moreInfoDialog;
-
+    private MoreInfoDialog moreInfoDialog;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -84,8 +83,9 @@ public class MoviesPopularFragment extends BaseFragment implements MoviesRecycle
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen,this);
+        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setOnIMDBClickedListener(this);
         moreInfoDialog.show();
     }
 
@@ -100,13 +100,20 @@ public class MoviesPopularFragment extends BaseFragment implements MoviesRecycle
     }
 
     @Override
+    public void onDestroyView() {
+        if (moreInfoDialog != null){
+            moreInfoDialog.setOnIMDBClickedListener(null);
+        }
+        super.onDestroyView();
+    }
+
+    @Override
     MoviesRecyclerViewAdapter getAdapter() {
         return moviesRecyclerViewAdapter;
     }
 
     @Override
     public void onIMDBClicked(String imdbID) {
-        int t = 9;
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));

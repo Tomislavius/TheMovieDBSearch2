@@ -46,13 +46,13 @@ public class MoreInfoDialog extends Dialog {
 
     public MoreInfoDialog(@NonNull Context context) {
         super(context);
+        init();
     }
 
     //TODO Create method for setting imdb click listener
-    public MoreInfoDialog(@NonNull Context context, int themeResId, OnIMDBClickedListener onIMDBClickedListener) {
+    public MoreInfoDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
-        this.onIMDBClickedListener = onIMDBClickedListener;
-        init();
+                init();
     }
 
     protected MoreInfoDialog(@NonNull Context context, boolean cancelable, @Nullable DialogInterface.OnCancelListener cancelListener) {
@@ -60,10 +60,11 @@ public class MoreInfoDialog extends Dialog {
         init();
     }
 
-    public void setData(String overview, String posterPath, int voteAverage, int movieID) {
-        //TODO Why id butterknife bind in set data?
-        ButterKnife.bind(this);
+    public void setOnIMDBClickedListener(OnIMDBClickedListener onIMDBClickedListener) {
+        this.onIMDBClickedListener = onIMDBClickedListener;
+    }
 
+    public void setData(String overview, String posterPath, int voteAverage, int movieID) {
         //TODO Why is view binding inside setData()?
         ImageView mPosterPath = findViewById(R.id.iv_show_more_movie);
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
@@ -100,7 +101,10 @@ public class MoreInfoDialog extends Dialog {
     private void init() {
         setContentView(R.layout.show_more);
         ButterKnife.bind(this);
-        dismiss.setOnClickListener(v -> dismiss());
+        dismiss.setOnClickListener(v -> {
+            setOnIMDBClickedListener(null);
+            dismiss();
+        });
     }
 
     public interface OnIMDBClickedListener {
