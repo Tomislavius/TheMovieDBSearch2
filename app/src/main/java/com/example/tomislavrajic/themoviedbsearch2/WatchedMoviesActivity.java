@@ -1,6 +1,8 @@
 package com.example.tomislavrajic.themoviedbsearch2;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -79,6 +81,9 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onIMDBClicked(String imdbID) {
-
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
+        startActivity(browserIntent);
     }
 }

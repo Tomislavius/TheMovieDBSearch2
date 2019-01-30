@@ -27,10 +27,11 @@
         app:layout_constraintTop_toBottomOf="@id/constraintLayoutProgressBar" />
 
     <TextView
-        android:layout_width="wrap_content"
         android:id="@+id/user_score"
+        android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="8dp"
+        android:layout_marginStart="8dp"
         android:gravity="center"
         android:text="USER SCORE"
         android:textColor="@color/colorText"
@@ -40,11 +41,12 @@
 
     <ImageButton
         android:id="@+id/ib_open_imdb"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/button_imdb"
         app:layout_constraintStart_toEndOf="@id/user_score"
-        app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie"
-        android:background="@color/colorText"/>
+        app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
 
     <Button
         android:id="@+id/bt_dismiss"

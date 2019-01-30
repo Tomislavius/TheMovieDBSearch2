@@ -1,5 +1,7 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -100,6 +102,9 @@ public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecy
 
     @Override
     public void onIMDBClicked(String imdbID) {
-
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
+        startActivity(browserIntent);
     }
 }

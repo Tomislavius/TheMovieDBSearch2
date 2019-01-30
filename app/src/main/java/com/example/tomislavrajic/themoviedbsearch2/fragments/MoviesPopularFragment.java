@@ -106,7 +106,6 @@ public class MoviesPopularFragment extends BaseFragment implements MoviesRecycle
 
     @Override
     public void onIMDBClicked(String imdbID) {
-        int t = 9;
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
