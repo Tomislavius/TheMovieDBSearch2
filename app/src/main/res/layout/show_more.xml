@@ -47,7 +47,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/buttonimdb"
+        android:background="@drawable/imdb_button"
         android:scaleType="center"
         app:layout_constraintStart_toEndOf="@+id/user_score"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
