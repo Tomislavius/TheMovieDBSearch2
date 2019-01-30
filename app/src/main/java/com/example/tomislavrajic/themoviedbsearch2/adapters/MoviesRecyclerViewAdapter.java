@@ -36,7 +36,6 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                                      LoadMoreCallback loadMoreCallback,
                                      MoreInfoClickListener moreInfoClickListener,
                                      OnCheckedChangeListener onCheckedChangeListener) {
-
         this.watchedMovies = watchedMovies;
         this.loadMoreCallback = loadMoreCallback;
         this.moreInfoClickListener = moreInfoClickListener;
@@ -66,7 +65,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getTitle());
             ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
             if (genre.length() < 2) {
-                ((MoviesViewHolder) moviesViewHolder).mGenre.setText("No genre!");
+                ((MoviesViewHolder) moviesViewHolder).mGenre.setText(R.string.no_genre);
             } else {
                 ((MoviesViewHolder) moviesViewHolder).mGenre.setText(genre.toString().substring(0, genre.length() - 2));
             }
@@ -89,10 +88,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 ((MoviesViewHolder) moviesViewHolder).mWatched.setChecked(moviesResultList.get(i).isChecked());
             }
 
-            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                onCheckedChangeListener.onCheckedChanged(isChecked, moviesResultList.get(moviesViewHolder.getAdapterPosition()));
-//                moviesResultList.get(moviesViewHolder.getAdapterPosition()).setChecked(isChecked);
-            });
+            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnCheckedChangeListener((buttonView, isChecked) ->
+                    onCheckedChangeListener.onCheckedChanged(isChecked, moviesResultList.get(moviesViewHolder.getAdapterPosition())));
 
             if (moviesResultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
                 Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,10 +29,11 @@ import retrofit2.Response;
 
 public class MoviesTopRatedFragment extends BaseFragment implements MoviesRecyclerViewAdapter.LoadMoreCallback,
         MoviesRecyclerViewAdapter.MoreInfoClickListener, MoviesRecyclerViewAdapter.OnCheckedChangeListener,
-        MoreInfoDialog.OnIMDBClickedListener{
+        MoreInfoDialog.OnIMDBClickListener {
 
     private int page;
     private MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
+    private MoreInfoDialog moreInfoDialog;
     @BindView(R.id.rv_top_rated_movies)
     RecyclerView mRecyclerView;
 
@@ -77,11 +77,6 @@ public class MoviesTopRatedFragment extends BaseFragment implements MoviesRecycl
         return moviesRecyclerViewAdapter;
     }
 
-    public void refreshData() {
-        WatchedSharedPreferences watchedSharedPreferences = new WatchedSharedPreferences(getContext());
-        moviesRecyclerViewAdapter.refreshWatchedMoviesList(watchedSharedPreferences.getWatchedMovies());
-    }
-
     @Override
     public void onLoadMoreClicked() {
         page++;
@@ -90,8 +85,9 @@ public class MoviesTopRatedFragment extends BaseFragment implements MoviesRecycl
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()),android.R.style.Theme_Black_NoTitleBar_Fullscreen,this);
+        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
 
@@ -103,6 +99,14 @@ public class MoviesTopRatedFragment extends BaseFragment implements MoviesRecycl
         } else {
             preferences.deleteMovie(moviesResult.getId());
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (moreInfoDialog != null) {
+            moreInfoDialog.setOnIMDBClickListener(null);
+        }
+        super.onDestroyView();
     }
 
     @Override

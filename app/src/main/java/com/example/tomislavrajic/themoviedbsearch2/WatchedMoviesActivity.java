@@ -22,14 +22,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
-        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickedListener {
+        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickListener {
 
+    private WatchedSharedPreferences watchedSharedPreferences;
+    private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
+    private MoreInfoDialog moreInfoDialog;
     @BindView(R.id.rv_watched_movies)
     RecyclerView mWatchedMoviesRecyclerView;
     @BindView(R.id.tv_empty_layout)
     TextView mEmptyLayout;
-    private WatchedSharedPreferences watchedSharedPreferences;
-    private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +75,9 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(this,android.R.style.Theme_Black_NoTitleBar_Fullscreen,this);
+        moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
 

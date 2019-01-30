@@ -22,6 +22,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="8dp"
+        android:maxLines="8"
+        android:ellipsize="end"
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/constraintLayoutProgressBar" />
@@ -31,7 +33,6 @@
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:layout_margin="8dp"
-        android:layout_marginStart="8dp"
         android:gravity="center"
         android:text="USER SCORE"
         android:textColor="@color/colorText"
@@ -41,11 +42,14 @@
 
     <ImageButton
         android:id="@+id/ib_open_imdb"
-        android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/button_imdb"
-        app:layout_constraintStart_toEndOf="@id/user_score"
+        android:layout_width="60dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/buttonimdb"
+        android:scaleType="center"
+        app:layout_constraintStart_toEndOf="@+id/user_score"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
 
     <Button
