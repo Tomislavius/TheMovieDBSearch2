@@ -70,6 +70,7 @@ public class MoreInfoDialog extends Dialog {
         if (voteAverage == 0) {
             userScore.setText(R.string.not_rated);
         } else {
+            //TODO Should use string resources
             userScore.setText(String.valueOf(voteAverage) + "%");
         }
         tvOverview.setText(overview);
