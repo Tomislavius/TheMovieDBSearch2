@@ -21,12 +21,12 @@
         android:id="@+id/tv_overview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:maxLines="8"
         android:ellipsize="end"
+        android:maxLines="8"
+        android:padding="8dp"
         android:textColor="@color/colorText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/constraintLayoutProgressBar" />
+        app:layout_constraintTop_toBottomOf="@id/tv_show_more_genre" />
 
     <TextView
         android:id="@+id/user_score"
@@ -40,6 +40,17 @@
         app:layout_constraintStart_toEndOf="@id/constraintLayoutProgressBar"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
 
+    <TextView
+        android:id="@+id/tv_show_more_genre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="Genre: "
+        android:textColor="#F5F5F5"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutProgressBar" />
+
     <ImageButton
         android:id="@+id/ib_open_imdb"
         android:layout_width="60dp"
@@ -47,9 +58,20 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="18dp"
         android:adjustViewBounds="true"
-        android:background="@drawable/buttonimdb"
+        android:background="@drawable/imdb_button"
         android:scaleType="center"
         app:layout_constraintStart_toEndOf="@+id/user_score"
+        app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
+
+    <ImageButton
+        android:id="@+id/ib_open_tmdb"
+        android:layout_width="32dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/tmdb_button"
+        android:scaleType="center"
+        app:layout_constraintStart_toEndOf="@id/ib_open_imdb"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
 
     <Button

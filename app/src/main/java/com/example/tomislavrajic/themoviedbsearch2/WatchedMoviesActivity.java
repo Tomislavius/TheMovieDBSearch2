@@ -88,4 +88,13 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
                 Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
         startActivity(browserIntent);
     }
+
+    @Override
+    public void onTMDBClicked(int movieID) {
+        Intent browserIntent = new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(BuildConfig.BASE_URL_TMDB + movieID));
+        startActivity(browserIntent);
+    }
 }
+
