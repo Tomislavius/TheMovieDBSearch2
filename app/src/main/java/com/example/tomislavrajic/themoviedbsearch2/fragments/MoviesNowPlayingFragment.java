@@ -27,9 +27,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecyclerViewAdapter.LoadMoreCallback,
-        MoviesRecyclerViewAdapter.MoreInfoClickListener, MoviesRecyclerViewAdapter.OnCheckedChangeListener,
-        MoreInfoDialog.OnIMDBClickListener {
+public class MoviesNowPlayingFragment extends BaseFragment {
 
     private int page;
     private MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
@@ -85,10 +83,11 @@ public class MoviesNowPlayingFragment extends BaseFragment implements MoviesRecy
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
-        moreInfoDialog.setOnIMDBClickListener(this);
-        moreInfoDialog.show();
+        getMoreInfoClicked(overview,posterPath,voteAverage,movieID);
+//        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+//        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+//        moreInfoDialog.setOnIMDBClickListener(this);
+//        moreInfoDialog.show();
     }
 
     @Override
