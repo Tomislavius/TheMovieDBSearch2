@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
+import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
@@ -39,6 +40,8 @@ public class MoreInfoDialog extends Dialog {
     ProgressBar progressBarUserScore;
     @BindView(R.id.ib_open_imdb)
     ImageButton openIMDB;
+    @BindView(R.id.ib_open_tmdb)
+    ImageButton openTMDB;
     @BindView(R.id.iv_show_more_movie)
     ImageView mPosterPath;
     //endregion
@@ -66,22 +69,21 @@ public class MoreInfoDialog extends Dialog {
 
     public void setData(String overview, String posterPath, int voteAverage, int movieID) {
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
-        progressBarUserScore.setProgress(voteAverage);
-        if (voteAverage == 0) {
-            userScore.setText(R.string.not_rated);
-        } else {
-            userScore.setText(String.valueOf(voteAverage) + "%");
-        }
-        tvOverview.setText(overview);
 
+        getUserScore(overview, voteAverage);
+
+        getExternalWebpage(movieID);
+    }
+
+    private void getExternalWebpage(int movieID) {
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
-
         service.getExternalID(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
             @Override
             public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
                 //TODO Handle unsuccessful response
                 String imdbId = response.body().getImdbId();
                 openIMDB.setOnClickListener(v -> onIMDBClickListener.onIMDBClicked(imdbId));
+                openTMDB.setOnClickListener(v -> onIMDBClickListener.onTMDBClicked(movieID));
             }
 
             @Override
@@ -89,6 +91,16 @@ public class MoreInfoDialog extends Dialog {
                 //TODO Handle no response
             }
         });
+    }
+
+    private void getUserScore(String overview, int voteAverage) {
+        progressBarUserScore.setProgress(voteAverage);
+        if (voteAverage == 0) {
+            userScore.setText(R.string.not_rated);
+        } else {
+            userScore.setText(String.valueOf(voteAverage) + "%");
+        }
+        tvOverview.setText(overview);
     }
 
     private void init() {
@@ -102,5 +114,7 @@ public class MoreInfoDialog extends Dialog {
 
     public interface OnIMDBClickListener {
         void onIMDBClicked(String imdbID);
+
+        void onTMDBClicked(int movieID);
     }
 }
