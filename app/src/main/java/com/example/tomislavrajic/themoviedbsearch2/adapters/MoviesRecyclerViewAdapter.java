@@ -63,7 +63,22 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             getFrame((MoviesViewHolder) moviesViewHolder);
 
         } else {
+
             setLoadMore((LoadMoreViewHolder) moviesViewHolder);
+        }
+    }
+
+    @Override
+    public int getItemCount() {
+        return moviesResultList.size() + 1;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position != moviesResultList.size()) {
+            return TYPE_ITEM;
+        } else {
+            return TYPE_BUTTON;
         }
     }
 
@@ -101,7 +116,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .onMoreInfoClicked(moviesResultList.get(i).getOverview(),
                         moviesResultList.get(i).getPosterPath(),
                         moviesResultList.get(i).getVoteAverage(),
-                        moviesResultList.get(i).getId()));
+                        moviesResultList.get(i).getId(),
+                        moviesResultList.get(i).getTitle(),
+                        moviesResultList.get(i).getReleaseDate()));
     }
 
     private void getPosterImage(@NonNull MoviesViewHolder moviesViewHolder, int i) {
@@ -126,35 +143,10 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     private void getText(@NonNull MoviesViewHolder moviesViewHolder, int i) {
-        getGenreList(moviesViewHolder, i);
+        Utils.getGenreList(moviesResultList.get(i).getGenreIds());
+        moviesViewHolder.mGenre.setText(Utils.genreList);
         moviesViewHolder.mMovieTitle.setText(moviesResultList.get(i).getTitle());
         moviesViewHolder.mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
-    }
-
-    private void getGenreList(@NonNull MoviesViewHolder moviesViewHolder, int i) {
-        StringBuilder genre = new StringBuilder();
-        for (int j = 0; j < moviesResultList.get(i).getGenreIds().size(); j++) {
-            genre.append(Utils.getGenre(moviesResultList.get(i).getGenreIds().get(j)));
-        }
-        if (genre.length() < 2) {
-            moviesViewHolder.mGenre.setText(R.string.no_genre);
-        } else {
-            moviesViewHolder.mGenre.setText(genre.toString().substring(0, genre.length() - 2));
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return moviesResultList.size() + 1;
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        if (position != moviesResultList.size()) {
-            return TYPE_ITEM;
-        } else {
-            return TYPE_BUTTON;
-        }
     }
 
     public void refreshWatchedMoviesList(ArrayList<MoviesResult> watchedMovies) {
@@ -167,7 +159,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         notifyItemRangeInserted(getItemCount(), results.size());
     }
 
-    public class MoviesViewHolder extends RecyclerView.ViewHolder {
+    class MoviesViewHolder extends RecyclerView.ViewHolder {
 
         //region View
         @BindView(R.id.tv_movie_title)
@@ -210,7 +202,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         void onLoadMoreClicked();
 
-        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID);
+        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
+                               String title, String releaseDate);
 
         void onCheckedChanged(boolean isChecked, MoviesResult moviesResult);
 

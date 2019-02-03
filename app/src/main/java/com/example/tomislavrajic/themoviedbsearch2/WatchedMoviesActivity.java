@@ -74,9 +74,10 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     @Override
-    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
+    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
+                                  String title, String releaseDate) {
         moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate);
         moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }

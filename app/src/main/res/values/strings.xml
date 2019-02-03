@@ -11,4 +11,5 @@
     <string name="no_movies_added_to_watched_list">NO MOVIES ADDED TO WATCHED LIST</string>
     <string name="not_rated">NR</string>
     <string name="no_genre">No genre!</string>
+    <string name="genre_title">Genre:</string>
 </resources>

@@ -1,9 +1,13 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
+import java.util.List;
+
 public class Utils {
 
     private Utils() {
     }
+
+    public static String genreList;
 
     public static String getGenre(int genreID) {
         switch (genreID) {
@@ -45,6 +49,18 @@ public class Utils {
                 return "War, ";
             default:
                 return "No Genre";
+        }
+    }
+
+    public static void getGenreList(List<Integer> listGenreIDs) {
+        StringBuilder genre = new StringBuilder();
+        for (int i = 0; i < listGenreIDs.size(); i++) {
+            genre.append(getGenre(listGenreIDs.get(i)));
+        }
+        if (genre.length() < 2) {
+            genreList = "No Genre!";
+        } else {
+            genreList = genre.toString().substring(0, genre.length() - 2);
         }
     }
 

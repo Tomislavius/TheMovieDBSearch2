@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
@@ -58,9 +59,11 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     }
 
     @Override
-    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
+                                  String title, String releaseDate) {
+        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()),
+                android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate);
         moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
@@ -70,8 +73,10 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
         WatchedSharedPreferences preferences = new WatchedSharedPreferences(getContext());
         if (isChecked) {
             preferences.saveMovie(moviesResult);
+            Toast.makeText(getContext(), "Movie added to Watched Movies!", Toast.LENGTH_SHORT).show();
         } else {
             preferences.deleteMovie(moviesResult.getId());
+            Toast.makeText(getContext(), "Movie removed from Watched Movies!", Toast.LENGTH_SHORT).show();
         }
     }
 
