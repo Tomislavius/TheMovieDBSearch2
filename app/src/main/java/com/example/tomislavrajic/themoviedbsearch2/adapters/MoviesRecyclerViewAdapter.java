@@ -21,16 +21,18 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_BUTTON = 1;
     private static final int TYPE_ITEM = 0;
     private List<MoviesResult> moviesResultList = new ArrayList<>(0);
-    private ArrayList<MoviesResult> watchedMovies;
+    private RealmResults<MoviesResult> watchedMovies;
     private OnBindClickListener onBindClickListener;
 
-    public MoviesRecyclerViewAdapter(ArrayList<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
+    public MoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
         this.watchedMovies = watchedMovies;
         this.onBindClickListener = onBindClickListener;
     }
@@ -52,7 +54,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         if (moviesViewHolder instanceof MoviesViewHolder) {
 
-            getText((MoviesViewHolder) moviesViewHolder, i);
+            ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList((RealmList<Integer>) moviesResultList.get(i).getGenreIds()));
+            ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getTitle());
+            ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
 
             setMoreInfo((MoviesViewHolder) moviesViewHolder, i);
 
@@ -63,7 +67,6 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             getFrame((MoviesViewHolder) moviesViewHolder);
 
         } else {
-
             setLoadMore((LoadMoreViewHolder) moviesViewHolder);
         }
     }
@@ -118,7 +121,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         moviesResultList.get(i).getVoteAverage(),
                         moviesResultList.get(i).getId(),
                         moviesResultList.get(i).getTitle(),
-                        moviesResultList.get(i).getReleaseDate()));
+                        moviesResultList.get(i).getReleaseDate(),
+                        moviesResultList.get(i).getGenreIds()));
     }
 
     private void getPosterImage(@NonNull MoviesViewHolder moviesViewHolder, int i) {
@@ -142,14 +146,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .into(moviesViewHolder.mBlackTrackRight);
     }
 
-    private void getText(@NonNull MoviesViewHolder moviesViewHolder, int i) {
-        Utils.getGenreList(moviesResultList.get(i).getGenreIds());
-        moviesViewHolder.mGenre.setText(Utils.genreList);
-        moviesViewHolder.mMovieTitle.setText(moviesResultList.get(i).getTitle());
-        moviesViewHolder.mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
-    }
-
-    public void refreshWatchedMoviesList(ArrayList<MoviesResult> watchedMovies) {
+    public void refreshWatchedMoviesList(RealmResults<MoviesResult> watchedMovies) {
         this.watchedMovies = watchedMovies;
         notifyDataSetChanged();
     }
@@ -203,7 +200,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         void onLoadMoreClicked();
 
         void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
-                               String title, String releaseDate);
+                               String title, String releaseDate, List<Integer> genreIds);
 
         void onCheckedChanged(boolean isChecked, MoviesResult moviesResult);
 

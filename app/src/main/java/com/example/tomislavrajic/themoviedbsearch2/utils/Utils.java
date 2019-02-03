@@ -1,15 +1,10 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
-import java.util.List;
+import io.realm.RealmList;
 
 public class Utils {
 
-    private Utils() {
-    }
-
-    public static String genreList;
-
-    public static String getGenre(int genreID) {
+    private static String getGenre(int genreID) {
         switch (genreID) {
             case 28:
                 return "Action, ";
@@ -52,16 +47,15 @@ public class Utils {
         }
     }
 
-    public static void getGenreList(List<Integer> listGenreIDs) {
+    public static String getGenreList(RealmList<Integer> listGenreIDs) {
         StringBuilder genre = new StringBuilder();
         for (int i = 0; i < listGenreIDs.size(); i++) {
             genre.append(getGenre(listGenreIDs.get(i)));
         }
         if (genre.length() < 2) {
-            genreList = "No Genre!";
+            return "No Genre!";
         } else {
-            genreList = genre.toString().substring(0, genre.length() - 2);
+            return genre.toString().substring(0, genre.length() - 2);
         }
     }
-
 }

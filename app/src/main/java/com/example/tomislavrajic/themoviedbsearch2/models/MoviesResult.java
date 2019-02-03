@@ -2,17 +2,21 @@ package com.example.tomislavrajic.themoviedbsearch2.models;
 
 import java.util.List;
 
-import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class MoviesResult {
+import io.realm.RealmList;
+import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+
+public class MoviesResult extends RealmObject {
 
     //region Fields
     @SerializedName("vote_count")
     @Expose
     private Integer voteCount;
 
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private int id;
@@ -47,7 +51,7 @@ public class MoviesResult {
 
     @SerializedName("genre_ids")
     @Expose
-    private List<Integer> genreIds;
+    private RealmList<Integer> genreIds;
 
     @SerializedName("backdrop_path")
     @Expose

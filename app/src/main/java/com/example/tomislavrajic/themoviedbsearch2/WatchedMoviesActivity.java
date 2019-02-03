@@ -14,17 +14,17 @@ import android.widget.Toast;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedMoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
-import com.example.tomislavrajic.themoviedbsearch2.utils.WatchedSharedPreferences;
-
-import java.util.ArrayList;
+import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
         WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickListener {
 
-    private WatchedSharedPreferences watchedSharedPreferences;
+    private DBHelper DBHelper;
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
     private MoreInfoDialog moreInfoDialog;
     @BindView(R.id.rv_watched_movies)
@@ -38,8 +38,8 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         setContentView(R.layout.activity_watched_movies);
         ButterKnife.bind(this);
 
-        watchedSharedPreferences = new WatchedSharedPreferences(this);
-        ArrayList<MoviesResult> watchedMovies = watchedSharedPreferences.getWatchedMovies();
+        DBHelper = new DBHelper();
+        RealmResults<MoviesResult> watchedMovies = DBHelper.getWatchedMovies();
 
         if (watchedMovies.isEmpty()) {
             showEmptyLayout();
@@ -55,7 +55,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         finish();
     }
 
-    private void setupRecyclerViewWatchedMovies(ArrayList<MoviesResult> watchedMovies) {
+    private void setupRecyclerViewWatchedMovies(RealmResults<MoviesResult> watchedMovies) {
         watchedMoviesRecyclerViewAdapter = new WatchedMoviesRecyclerViewAdapter(watchedMovies, this, this);
         mWatchedMoviesRecyclerView.setAdapter(watchedMoviesRecyclerViewAdapter);
         ItemTouchHelper itemTouchHelper = new
@@ -70,14 +70,14 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onMovieRemoved(int id) {
-        watchedSharedPreferences.deleteMovie(id);
+        DBHelper.deleteMovie(id);
     }
 
     @Override
     public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
-                                  String title, String releaseDate) {
+                                  String title, String releaseDate, RealmList<Integer> movieList) {
         moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate);
+        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate, movieList);
         moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }

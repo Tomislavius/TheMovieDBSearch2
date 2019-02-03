@@ -16,12 +16,15 @@ import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
+import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -72,13 +75,14 @@ public class MoreInfoDialog extends Dialog {
         this.onIMDBClickListener = onIMDBClickListener;
     }
 
-    public void setData(String overview, String posterPath, int voteAverage, int movieID, String title, String releaseDate) {
+    public void setData(String overview, String posterPath, int voteAverage, int movieID, String title,
+                        String releaseDate, RealmList<Integer> moviesResults) {
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
         StringBuilder titleAndYear = new StringBuilder();
         titleAndYear.append(title).append(" (").append(releaseDate.substring(6)).append(")");
         getUserScore(voteAverage);
         tvOverview.setText(overview);
-        tvShowMoreGenre.setText(Utils.genreList);
+        tvShowMoreGenre.setText(Utils.getGenreList(moviesResults));
         showMoreTitle.setText(titleAndYear);
         getExternalWebpage(movieID);
     }
