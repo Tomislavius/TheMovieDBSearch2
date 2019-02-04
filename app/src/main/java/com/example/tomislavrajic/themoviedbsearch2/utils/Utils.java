@@ -1,5 +1,13 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
+import android.support.annotation.NonNull;
+
+import com.example.tomislavrajic.themoviedbsearch2.R;
+import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Utils {
 
     private Utils() {
@@ -46,6 +54,14 @@ public class Utils {
             default:
                 return "No Genre";
         }
+    }
+
+    public static String getGenreList(List<Integer> genreIDlist){
+        StringBuilder genre = new StringBuilder();
+        for (int i = 0; i < genreIDlist.size(); i++) {
+            genre.append(getGenre(genreIDlist.get(i)))
+        }
+        return "null";
     }
 
 }

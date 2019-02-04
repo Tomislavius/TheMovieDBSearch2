@@ -56,6 +56,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             setMoreInfo((MoviesViewHolder) moviesViewHolder, i);
 
+            Utils.getGenreList(moviesResultList.get(i).getGenreIds());
+
             setWatched(moviesViewHolder, i);
 
             getPosterImage((MoviesViewHolder) moviesViewHolder, i);
