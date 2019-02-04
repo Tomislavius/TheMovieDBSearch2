@@ -1,19 +1,10 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
-import android.support.annotation.NonNull;
-
-import com.example.tomislavrajic.themoviedbsearch2.R;
-import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
+import io.realm.RealmList;
 
 public class Utils {
 
-    private Utils() {
-    }
-
-    public static String getGenre(int genreID) {
+    private static String getGenre(int genreID) {
         switch (genreID) {
             case 28:
                 return "Action, ";
@@ -56,12 +47,15 @@ public class Utils {
         }
     }
 
-    public static String getGenreList(List<Integer> genreIDlist){
+    public static String getGenreList(RealmList<Integer> listGenreIDs) {
         StringBuilder genre = new StringBuilder();
-        for (int i = 0; i < genreIDlist.size(); i++) {
-            genre.append(getGenre(genreIDlist.get(i)))
+        for (int i = 0; i < listGenreIDs.size(); i++) {
+            genre.append(getGenre(listGenreIDs.get(i)));
         }
-        return "null";
+        if (genre.length() < 2) {
+            return "No Genre!";
+        } else {
+            return genre.toString().substring(0, genre.length() - 2);
+        }
     }
-
 }

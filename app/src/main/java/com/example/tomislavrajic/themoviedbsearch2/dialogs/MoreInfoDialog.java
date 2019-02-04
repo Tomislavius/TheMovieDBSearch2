@@ -16,11 +16,15 @@ import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
+import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
+import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,6 +40,10 @@ public class MoreInfoDialog extends Dialog {
     TextView tvOverview;
     @BindView(R.id.tv_user_score)
     TextView userScore;
+    @BindView(R.id.tv_show_more_genre)
+    TextView tvShowMoreGenre;
+    @BindView(R.id.tv_show_more_title)
+    TextView showMoreTitle;
     @BindView(R.id.stats_progressbar)
     ProgressBar progressBarUserScore;
     @BindView(R.id.ib_open_imdb)
@@ -67,11 +75,15 @@ public class MoreInfoDialog extends Dialog {
         this.onIMDBClickListener = onIMDBClickListener;
     }
 
-    public void setData(String overview, String posterPath, int voteAverage, int movieID) {
+    public void setData(String overview, String posterPath, int voteAverage, int movieID, String title,
+                        String releaseDate, RealmList<Integer> moviesResults) {
         Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
-
-        getUserScore(overview, voteAverage);
-
+        StringBuilder titleAndYear = new StringBuilder();
+        titleAndYear.append(title).append(" (").append(releaseDate.substring(6)).append(")");
+        getUserScore(voteAverage);
+        tvOverview.setText(overview);
+        tvShowMoreGenre.setText(Utils.getGenreList(moviesResults));
+        showMoreTitle.setText(titleAndYear);
         getExternalWebpage(movieID);
     }
 
@@ -93,14 +105,13 @@ public class MoreInfoDialog extends Dialog {
         });
     }
 
-    private void getUserScore(String overview, int voteAverage) {
+    private void getUserScore(int voteAverage) {
         progressBarUserScore.setProgress(voteAverage);
         if (voteAverage == 0) {
             userScore.setText(R.string.not_rated);
         } else {
             userScore.setText(String.valueOf(voteAverage) + "%");
         }
-        tvOverview.setText(overview);
     }
 
     private void init() {

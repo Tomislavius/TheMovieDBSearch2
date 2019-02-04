@@ -10,18 +10,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
-import com.example.tomislavrajic.themoviedbsearch2.utils.WatchedSharedPreferences;
+import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
 
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
 
 public abstract class BaseFragment extends Fragment implements MoviesRecyclerViewAdapter.OnBindClickListener,
         MoreInfoDialog.OnIMDBClickListener {
@@ -41,7 +44,7 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
         page = 1;
         ButterKnife.bind(this, view);
 
-        WatchedSharedPreferences preferences = new WatchedSharedPreferences(getContext());
+        DBHelper preferences = new DBHelper();
         moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(preferences.getWatchedMovies(), this);
         mRecyclerView.setAdapter(moviesRecyclerViewAdapter);
 
@@ -53,25 +56,29 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     protected abstract void loadMovies();
 
     public void refreshData() {
-        WatchedSharedPreferences watchedSharedPreferences = new WatchedSharedPreferences(getContext());
-        moviesRecyclerViewAdapter.refreshWatchedMoviesList(watchedSharedPreferences.getWatchedMovies());
+        DBHelper DBHelper = new DBHelper();
+        moviesRecyclerViewAdapter.refreshWatchedMoviesList(DBHelper.getWatchedMovies());
     }
 
     @Override
-    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID) {
-        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()), android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID);
+    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
+                                  String title, String releaseDate, List<Integer> genreIds) {
+        moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()),
+                android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate, (RealmList<Integer>) genreIds);
         moreInfoDialog.setOnIMDBClickListener(this);
         moreInfoDialog.show();
     }
 
     @Override
     public void onCheckedChanged(boolean isChecked, MoviesResult moviesResult) {
-        WatchedSharedPreferences preferences = new WatchedSharedPreferences(getContext());
+        DBHelper preferences = new DBHelper();
         if (isChecked) {
             preferences.saveMovie(moviesResult);
+            Toast.makeText(getContext(), "Movie added to Watched Movies!", Toast.LENGTH_SHORT).show();
         } else {
             preferences.deleteMovie(moviesResult.getId());
+            Toast.makeText(getContext(), "Movie removed from Watched Movies!", Toast.LENGTH_SHORT).show();
         }
     }
 

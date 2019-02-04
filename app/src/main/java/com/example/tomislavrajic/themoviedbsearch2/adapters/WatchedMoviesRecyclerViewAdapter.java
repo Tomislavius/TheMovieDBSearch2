@@ -17,17 +17,23 @@ import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.RealmList;
+import io.realm.RealmResults;
 
-public class WatchedMoviesRecyclerViewAdapter extends RecyclerView.Adapter<WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
+public class WatchedMoviesRecyclerViewAdapter extends
+        RecyclerView.Adapter<WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
 
-    private ArrayList<MoviesResult> watchedMoviesList;
+    private RealmResults<MoviesResult> watchedMoviesList;
     private OnRemoveClickListener onRemoveClickListener;
     private MoreInfoClickListener moreInfoClickListener;
 
-    public WatchedMoviesRecyclerViewAdapter(ArrayList<MoviesResult> watchedMoviesList, OnRemoveClickListener onRemoveClickListener, MoreInfoClickListener moreInfoClickListener) {
+    public WatchedMoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMoviesList,
+                                            OnRemoveClickListener onRemoveClickListener,
+                                            MoreInfoClickListener moreInfoClickListener) {
         this.watchedMoviesList = watchedMoviesList;
         this.onRemoveClickListener = onRemoveClickListener;
         this.moreInfoClickListener = moreInfoClickListener;
@@ -43,18 +49,17 @@ public class WatchedMoviesRecyclerViewAdapter extends RecyclerView.Adapter<Watch
     @Override
     public void onBindViewHolder(@NonNull WatchedMoviesViewHolder watchedMoviesViewHolder, int i) {
         watchedMoviesViewHolder.mWatched.setVisibility(View.GONE);
-        StringBuilder genre = new StringBuilder();
-        for (int j = 0; j < watchedMoviesList.get(i).getGenreIds().size(); j++) {
-            genre.append(Utils.getGenre(watchedMoviesList.get(i).getGenreIds().get(j)));
-        }
         watchedMoviesViewHolder.mMovieTitle.setText(watchedMoviesList.get(i).getTitle());
         watchedMoviesViewHolder.mReleaseDate.setText(watchedMoviesList.get(i).getReleaseDate());
-        watchedMoviesViewHolder.mGenre.setText(genre.toString().substring(0, genre.length() - 2));
+        watchedMoviesViewHolder.mGenre.setText(Utils.getGenreList((RealmList<Integer>) watchedMoviesList.get(i).getGenreIds()));
         watchedMoviesViewHolder.mMoreInfo.setOnClickListener(v ->
                 moreInfoClickListener.onMoreInfoClicked(watchedMoviesList.get(i).getOverview(),
                         watchedMoviesList.get(i).getPosterPath(),
                         watchedMoviesList.get(i).getVoteAverage(),
-                        watchedMoviesList.get(i).getId()));
+                        watchedMoviesList.get(i).getId(),
+                        watchedMoviesList.get(i).getTitle(),
+                        watchedMoviesList.get(i).getReleaseDate(),
+                        (RealmList<Integer>) watchedMoviesList.get(i).getGenreIds()));
 
         if (watchedMoviesList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
             Glide.with(watchedMoviesViewHolder.mPosterPath.getContext())
@@ -80,7 +85,7 @@ public class WatchedMoviesRecyclerViewAdapter extends RecyclerView.Adapter<Watch
 
     public void deleteItem(int position) {
         onRemoveClickListener.onMovieRemoved(watchedMoviesList.get(position).getId());
-        watchedMoviesList.remove(position);
+//        watchedMoviesList.re(position);
         notifyItemRemoved(position);
     }
 
@@ -116,6 +121,7 @@ public class WatchedMoviesRecyclerViewAdapter extends RecyclerView.Adapter<Watch
     }
 
     public interface MoreInfoClickListener {
-        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID);
+        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
+                               String title, String releaseDate, RealmList<Integer> moviesResults);
     }
 }
