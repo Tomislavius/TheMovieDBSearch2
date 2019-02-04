@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -14,9 +15,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
-import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
@@ -24,7 +23,6 @@ import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.RealmList;
-import io.realm.RealmResults;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,8 +42,18 @@ public class MoreInfoDialog extends Dialog {
     TextView tvShowMoreGenre;
     @BindView(R.id.tv_show_more_title)
     TextView showMoreTitle;
-    @BindView(R.id.stats_progressbar)
-    ProgressBar progressBarUserScore;
+    @BindView(R.id.stats_progressbar_red)
+    ProgressBar progressBarUserScoreRed;
+    @BindView(R.id.background_progressbar_red)
+    ProgressBar backgroundProgressBarRed;
+    @BindView(R.id.stats_progressbar_yellow)
+    ProgressBar progressBarUserScoreYellow;
+    @BindView(R.id.background_progressbar_yellow)
+    ProgressBar backgroundProgressBarYellow;
+    @BindView(R.id.stats_progressbar_green)
+    ProgressBar progressBarUserScoreGreen;
+    @BindView(R.id.background_progressbar_green)
+    ProgressBar backgroundProgressBarGreen;
     @BindView(R.id.ib_open_imdb)
     ImageButton openIMDB;
     @BindView(R.id.ib_open_tmdb)
@@ -106,10 +114,27 @@ public class MoreInfoDialog extends Dialog {
     }
 
     private void getUserScore(int voteAverage) {
-        progressBarUserScore.setProgress(voteAverage);
+
         if (voteAverage == 0) {
+            backgroundProgressBarYellow.setVisibility(View.VISIBLE);
             userScore.setText(R.string.not_rated);
-        } else {
+
+        } else if (voteAverage >= 1 && voteAverage <= 39) {
+            backgroundProgressBarRed.setVisibility(View.VISIBLE);
+            progressBarUserScoreRed.setVisibility(View.VISIBLE);
+            progressBarUserScoreRed.setProgress(voteAverage);
+            userScore.setText(String.valueOf(voteAverage) + "%");
+
+        } else if (voteAverage >= 40 && voteAverage <= 69) {
+            backgroundProgressBarYellow.setVisibility(View.VISIBLE);
+            progressBarUserScoreYellow.setVisibility(View.VISIBLE);
+            progressBarUserScoreYellow.setProgress(voteAverage);
+            userScore.setText(String.valueOf(voteAverage) + "%");
+
+        } else if (voteAverage >= 70 && voteAverage <= 100) {
+            backgroundProgressBarGreen.setVisibility(View.VISIBLE);
+            progressBarUserScoreGreen.setVisibility(View.VISIBLE);
+            progressBarUserScoreGreen.setProgress(voteAverage);
             userScore.setText(String.valueOf(voteAverage) + "%");
         }
     }

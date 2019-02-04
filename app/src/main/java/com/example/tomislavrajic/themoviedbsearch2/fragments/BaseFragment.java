@@ -72,12 +72,12 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
 
     @Override
     public void onCheckedChanged(boolean isChecked, MoviesResult moviesResult) {
-        DBHelper preferences = new DBHelper();
+        DBHelper dbHelper = new DBHelper();
         if (isChecked) {
-            preferences.saveMovie(moviesResult);
+            dbHelper.saveMovie(moviesResult);
             Toast.makeText(getContext(), "Movie added to Watched Movies!", Toast.LENGTH_SHORT).show();
         } else {
-            preferences.deleteMovie(moviesResult.getId());
+            dbHelper.deleteMovie(moviesResult.getId());
             Toast.makeText(getContext(), "Movie removed from Watched Movies!", Toast.LENGTH_SHORT).show();
         }
     }
