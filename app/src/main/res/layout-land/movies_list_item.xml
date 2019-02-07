@@ -6,6 +6,7 @@
     android:background="@color/colorPrimaryDark">
 
     <ImageView
+        android:layout_marginTop="5dp"
         android:id="@+id/iv_black_track_left"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
