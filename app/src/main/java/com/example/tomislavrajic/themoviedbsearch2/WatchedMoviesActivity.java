@@ -2,9 +2,12 @@ package com.example.tomislavrajic.themoviedbsearch2;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
@@ -40,13 +43,21 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
         DBHelper = new DBHelper();
         RealmResults<MoviesResult> watchedMovies = DBHelper.getWatchedMovies();
+        int currentOrientation = getResources().getConfiguration().orientation;
+        RecyclerView.LayoutManager layoutManager = null;
 
         if (watchedMovies.isEmpty()) {
             showEmptyLayout();
+        } else if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            setupRecyclerViewWatchedMovies(watchedMovies);
+            layoutManager = new GridLayoutManager(this, 2);
+            Toast.makeText(this, "Swipe to remove!", Toast.LENGTH_SHORT).show();
         } else {
             setupRecyclerViewWatchedMovies(watchedMovies);
+            layoutManager = new LinearLayoutManager(this);
             Toast.makeText(this, "Swipe to remove!", Toast.LENGTH_SHORT).show();
         }
+        mWatchedMoviesRecyclerView.setLayoutManager(layoutManager);
     }
 
     @Override

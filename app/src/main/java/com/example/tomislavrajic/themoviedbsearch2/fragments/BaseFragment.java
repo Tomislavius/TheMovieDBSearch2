@@ -39,21 +39,6 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
