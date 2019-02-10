@@ -70,6 +70,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             setMoreInfo((MoviesViewHolder) moviesViewHolder, i);
 
+            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnCheckedChangeListener(null);
             setWatched(moviesViewHolder, i);
 
             getFrame((MoviesViewHolder) moviesViewHolder);

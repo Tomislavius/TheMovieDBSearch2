@@ -29,7 +29,7 @@
     <ImageView
         android:id="@+id/iv_movie"
         android:layout_width="130dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/iv_bottom_line"
         app:layout_constraintLeft_toRightOf="@id/iv_black_track_left"
         app:layout_constraintTop_toTopOf="parent" />

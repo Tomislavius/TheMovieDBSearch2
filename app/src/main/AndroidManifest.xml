@@ -21,8 +21,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MoviesActivity" />
-        <activity android:name=".WatchedMoviesActivity"></activity>
+        <activity
+            android:name=".MoviesActivity"
+            android:configChanges="orientation" />
+        <activity android:name=".WatchedMoviesActivity">
+
+        </activity>
     </application>
 
 </manifest>

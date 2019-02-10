@@ -1,11 +1,15 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +39,39 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movies, container, false);
 
+
         page = 1;
         ButterKnife.bind(this, view);
+
+        int currentOrientation = getResources().getConfiguration().orientation;
+        RecyclerView.LayoutManager layoutManager;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            layoutManager = new GridLayoutManager(getContext(), 2);
+        } else {
+            layoutManager = new LinearLayoutManager(getContext());
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
 
         DBHelper preferences = new DBHelper();
         moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(preferences.getWatchedMovies(), this);
@@ -51,6 +80,20 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
         loadMovies();
 
         return view;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        int currentOrientation = getResources().getConfiguration().orientation;
+        RecyclerView.LayoutManager layoutManager;
+        if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+            layoutManager = new GridLayoutManager(getContext(), 2);
+        } else {
+            layoutManager = new LinearLayoutManager(getContext());
+        }
+        mRecyclerView.setLayoutManager(layoutManager);
     }
 
     protected abstract void loadMovies();
