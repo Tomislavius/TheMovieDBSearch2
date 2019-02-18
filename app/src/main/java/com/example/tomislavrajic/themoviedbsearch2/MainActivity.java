@@ -32,7 +32,5 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, MoviesActivity.class);
             startActivity(intent);
         });
-
-
     }
 }

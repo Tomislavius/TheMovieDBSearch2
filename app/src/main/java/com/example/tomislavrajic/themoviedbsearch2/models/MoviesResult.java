@@ -1,5 +1,6 @@
 package com.example.tomislavrajic.themoviedbsearch2.models;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -9,7 +10,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class MoviesResult extends RealmObject {
+public class MoviesResult extends RealmObject implements Serializable {
 
     //region Fields
     @SerializedName("vote_count")
@@ -72,6 +73,7 @@ public class MoviesResult extends RealmObject {
     private boolean isChecked;
     //endregion
 
+    //region Getters and Setters
     public String getTitle() {
         return title;
     }
@@ -80,8 +82,14 @@ public class MoviesResult extends RealmObject {
         return posterPath;
     }
 
+    public void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
+    }
+
     public String getReleaseDate() {
-        return "Year: " + releaseDate.substring(0, 4);
+        if (releaseDate.length() > 0) {
+            return "Year: " + releaseDate.substring(0, 4);
+        } else return "Unknown";
     }
 
     public List<Integer> getGenreIds() {
@@ -107,4 +115,5 @@ public class MoviesResult extends RealmObject {
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+    //endregion
 }

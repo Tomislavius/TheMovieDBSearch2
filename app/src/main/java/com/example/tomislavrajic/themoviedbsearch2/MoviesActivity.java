@@ -14,10 +14,6 @@ import android.view.MenuItem;
 
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesFragmentPagerAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.fragments.BaseFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesNowPlayingFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesPopularFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesTopRatedFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesUpcomingFragment;
 
 import java.util.List;
 

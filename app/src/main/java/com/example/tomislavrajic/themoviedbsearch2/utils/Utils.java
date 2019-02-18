@@ -1,5 +1,7 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
+import java.util.List;
+
 import io.realm.RealmList;
 
 public class Utils {
@@ -47,7 +49,7 @@ public class Utils {
         }
     }
 
-    public static String getGenreList(RealmList<Integer> listGenreIDs) {
+    public static String getGenreList(List<Integer> listGenreIDs) {
         StringBuilder genre = new StringBuilder();
         for (int i = 0; i < listGenreIDs.size(); i++) {
             genre.append(getGenre(listGenreIDs.get(i)));

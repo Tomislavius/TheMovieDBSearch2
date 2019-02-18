@@ -3,6 +3,7 @@ package com.example.tomislavrajic.themoviedbsearch2.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -11,11 +12,13 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
+import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
@@ -29,7 +32,7 @@ import retrofit2.Response;
 
 public class MoreInfoDialog extends Dialog {
 
-    private OnIMDBClickListener onIMDBClickListener;
+    private OnExternalWebPageClickListener onExternalWebPageClickListener;
 
     //region View
     @BindView(R.id.bt_dismiss)
@@ -79,20 +82,19 @@ public class MoreInfoDialog extends Dialog {
     }
     //endregion
 
-    public void setOnIMDBClickListener(OnIMDBClickListener onIMDBClickListener) {
-        this.onIMDBClickListener = onIMDBClickListener;
+    public void setOnExternalWebPageClickListener(OnExternalWebPageClickListener onExternalWebPageClickListener) {
+        this.onExternalWebPageClickListener = onExternalWebPageClickListener;
     }
 
-    public void setData(String overview, String posterPath, int voteAverage, int movieID, String title,
-                        String releaseDate, RealmList<Integer> moviesResults) {
-        Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + posterPath).into(mPosterPath);
+    public void setData(MoviesResult movieResult) {
+        Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(mPosterPath);
         StringBuilder titleAndYear = new StringBuilder();
-        titleAndYear.append(title).append(" (").append(releaseDate.substring(6)).append(")");
-        getUserScore(voteAverage);
-        tvOverview.setText(overview);
-        tvShowMoreGenre.setText(Utils.getGenreList(moviesResults));
+        titleAndYear.append(movieResult.getTitle()).append(" (").append(movieResult.getReleaseDate().substring(6)).append(")");
+        setUserScore(movieResult.getVoteAverage());
+        tvOverview.setText(movieResult.getOverview());
+        tvShowMoreGenre.setText(Utils.getGenreList(movieResult.getGenreIds()));
         showMoreTitle.setText(titleAndYear);
-        getExternalWebpage(movieID);
+        getExternalWebpage(movieResult.getId());
     }
 
     private void getExternalWebpage(int movieID) {
@@ -100,55 +102,57 @@ public class MoreInfoDialog extends Dialog {
         service.getExternalID(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
             @Override
             public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
-                //TODO Handle unsuccessful response
-                String imdbId = response.body().getImdbId();
-                openIMDB.setOnClickListener(v -> onIMDBClickListener.onIMDBClicked(imdbId));
-                openTMDB.setOnClickListener(v -> onIMDBClickListener.onTMDBClicked(movieID));
+                if (response.code() == 200) {
+                    String imdbId = response.body().getImdbId();
+                    openIMDB.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId));
+                    openTMDB.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(movieID));
+                } else if (response.code() == 401) {
+                    Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
+                } else if (response.code() == 404) {
+                    Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
             public void onFailure(Call<ExternalID> call, Throwable t) {
-                //TODO Handle no response
+                Toast.makeText(getContext(), "Failed to connect.", Toast.LENGTH_LONG).show();
             }
         });
     }
 
-    private void getUserScore(int voteAverage) {
+    private void setUserScore(int voteAverage) {
 
         if (voteAverage == 0) {
             backgroundProgressBarYellow.setVisibility(View.VISIBLE);
             userScore.setText(R.string.not_rated);
-
+            return;
         } else if (voteAverage >= 1 && voteAverage <= 39) {
             backgroundProgressBarRed.setVisibility(View.VISIBLE);
             progressBarUserScoreRed.setVisibility(View.VISIBLE);
             progressBarUserScoreRed.setProgress(voteAverage);
-            userScore.setText(String.valueOf(voteAverage) + "%");
-
         } else if (voteAverage >= 40 && voteAverage <= 69) {
             backgroundProgressBarYellow.setVisibility(View.VISIBLE);
             progressBarUserScoreYellow.setVisibility(View.VISIBLE);
             progressBarUserScoreYellow.setProgress(voteAverage);
-            userScore.setText(String.valueOf(voteAverage) + "%");
-
         } else if (voteAverage >= 70 && voteAverage <= 100) {
             backgroundProgressBarGreen.setVisibility(View.VISIBLE);
             progressBarUserScoreGreen.setVisibility(View.VISIBLE);
             progressBarUserScoreGreen.setProgress(voteAverage);
-            userScore.setText(String.valueOf(voteAverage) + "%");
         }
+        userScore.setText(String.valueOf(voteAverage) + "%");
     }
 
     private void init() {
         setContentView(R.layout.show_more);
         ButterKnife.bind(this);
         dismiss.setOnClickListener(v -> {
-            setOnIMDBClickListener(null);
+            setOnExternalWebPageClickListener(null);
             dismiss();
         });
     }
 
-    public interface OnIMDBClickListener {
+    public interface OnExternalWebPageClickListener {
+
         void onIMDBClicked(String imdbID);
 
         void onTMDBClicked(int movieID);

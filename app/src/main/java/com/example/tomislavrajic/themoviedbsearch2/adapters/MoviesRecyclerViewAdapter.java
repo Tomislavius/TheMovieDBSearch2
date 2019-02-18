@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,7 +20,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmList;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmResults;
 
 public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -29,10 +28,10 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     private static final int TYPE_BUTTON = 1;
     private static final int TYPE_ITEM = 0;
     private List<MoviesResult> moviesResultList = new ArrayList<>(0);
-    private RealmResults<MoviesResult> watchedMovies;
+    private OrderedRealmCollection<MoviesResult> watchedMovies;
     private OnBindClickListener onBindClickListener;
 
-    public MoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
+    public MoviesRecyclerViewAdapter(OrderedRealmCollection<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
         this.watchedMovies = watchedMovies;
         this.onBindClickListener = onBindClickListener;
     }
@@ -56,7 +55,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
             ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getTitle());
             ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
-            ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList((RealmList<Integer>) moviesResultList.get(i).getGenreIds()));
+            ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList(moviesResultList.get(i).getGenreIds()));
 
             if (moviesResultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
                 Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
@@ -68,12 +67,13 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                         .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
             }
 
-            setMoreInfo((MoviesViewHolder) moviesViewHolder, i);
+            setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i);
 
-            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnCheckedChangeListener(null);
-            setWatched(moviesViewHolder, i);
+            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(null);
 
-            getFrame((MoviesViewHolder) moviesViewHolder);
+            setButtonWatched(moviesViewHolder, i);
+
+            setFrame((MoviesViewHolder) moviesViewHolder);
 
         } else {
             setLoadMore((LoadMoreViewHolder) moviesViewHolder);
@@ -104,11 +104,12 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .mButtonLoadMore.setOnClickListener(v -> onBindClickListener.onLoadMoreClicked());
     }
 
-    private void setWatched(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i) {
+    private void setButtonWatched(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i) {
         if (watchedMovies.size() == 0) {
-            ((MoviesViewHolder) moviesViewHolder).mWatched.setChecked(false);
+            loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
         } else {
             for (int j = 0; j < watchedMovies.size(); j++) {
+                assert watchedMovies.get(j) != null;
                 if (watchedMovies.get(j).getId() == moviesResultList.get(i).getId()) {
                     moviesResultList.get(i).setChecked(true);
                     break;
@@ -116,24 +117,41 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                     moviesResultList.get(i).setChecked(false);
                 }
             }
-            ((MoviesViewHolder) moviesViewHolder).mWatched.setChecked(moviesResultList.get(i).isChecked());
+            if (moviesResultList.get(i).isChecked()) {
+                loadWatchedImage(moviesViewHolder, R.drawable.watched_enabled);
+            } else {
+                loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
+            }
         }
-        ((MoviesViewHolder) moviesViewHolder).mWatched.setOnCheckedChangeListener((buttonView, isChecked) ->
-                onBindClickListener.onCheckedChanged(isChecked, moviesResultList.get(moviesViewHolder.getAdapterPosition())));
+
+        ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(v -> {
+            if (moviesResultList.get(i).isChecked()) {
+                moviesResultList.get(i).setChecked(false);
+            } else {
+                moviesResultList.get(i).setChecked(true);
+            }
+            onBindClickListener.onCheckedChanged(moviesResultList.get(i).isChecked()
+                    , moviesResultList.get(moviesViewHolder.getAdapterPosition()));
+            if (moviesResultList.get(i).isChecked()) {
+                loadWatchedImage(moviesViewHolder, R.drawable.watched_enabled);
+            } else {
+                loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
+            }
+        });
     }
 
-    private void setMoreInfo(@NonNull MoviesViewHolder moviesViewHolder, int i) {
+    private void loadWatchedImage(@NonNull RecyclerView.ViewHolder moviesViewHolder, int p) {
+        Glide.with(moviesViewHolder.itemView.getContext())
+                .load(p)
+                .into(((MoviesViewHolder) moviesViewHolder).mWatched);
+    }
+
+    private void setMoreInfoClickListener(@NonNull MoviesViewHolder moviesViewHolder, int i) {
         moviesViewHolder.mMoreInfo.setOnClickListener(v -> onBindClickListener
-                .onMoreInfoClicked(moviesResultList.get(i).getOverview(),
-                        moviesResultList.get(i).getPosterPath(),
-                        moviesResultList.get(i).getVoteAverage(),
-                        moviesResultList.get(i).getId(),
-                        moviesResultList.get(i).getTitle(),
-                        moviesResultList.get(i).getReleaseDate(),
-                        moviesResultList.get(i).getGenreIds()));
+                .onMoreInfoClicked(moviesResultList.get(i)));
     }
 
-    private void getFrame(@NonNull MoviesViewHolder moviesViewHolder) {
+    private void setFrame(@NonNull MoviesViewHolder moviesViewHolder) {
         Glide.with(moviesViewHolder.mBlackTrackLeft.getContext())
                 .load(R.drawable.movie_track_left)
                 .into(moviesViewHolder.mBlackTrackLeft);
@@ -142,7 +160,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .into(moviesViewHolder.mBlackTrackRight);
     }
 
-    public void refreshWatchedMoviesList(RealmResults<MoviesResult> watchedMovies) {
+    public void refreshWatchedMoviesList(OrderedRealmCollection<MoviesResult> watchedMovies) {
         this.watchedMovies = watchedMovies;
         notifyDataSetChanged();
     }
@@ -169,8 +187,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         ImageView mBlackTrackRight;
         @BindView(R.id.bt_more_info)
         Button mMoreInfo;
-        @BindView(R.id.cb_watched)
-        CheckBox mWatched;
+        @BindView(R.id.iv_watched)
+        ImageView mWatched;
         //endregion
 
         private MoviesViewHolder(@NonNull View itemView) {
@@ -195,11 +213,8 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         void onLoadMoreClicked();
 
-        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
-                               String title, String releaseDate, List<Integer> genreIds);
+        void onMoreInfoClicked(MoviesResult movieResult);
 
         void onCheckedChanged(boolean isChecked, MoviesResult moviesResult);
-
     }
 }
-

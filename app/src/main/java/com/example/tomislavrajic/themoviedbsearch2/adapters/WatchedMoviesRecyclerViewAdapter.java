@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,24 +15,24 @@ import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.realm.OrderedRealmCollection;
 import io.realm.RealmList;
+import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
 public class WatchedMoviesRecyclerViewAdapter extends
-        RecyclerView.Adapter<WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
+        RealmRecyclerViewAdapter<MoviesResult, WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
 
-    private RealmResults<MoviesResult> watchedMoviesList;
+    private OrderedRealmCollection<MoviesResult> watchedMoviesList;
     private OnRemoveClickListener onRemoveClickListener;
     private MoreInfoClickListener moreInfoClickListener;
 
-    public WatchedMoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMoviesList,
+    public WatchedMoviesRecyclerViewAdapter(OrderedRealmCollection<MoviesResult> watchedMoviesList,
                                             OnRemoveClickListener onRemoveClickListener,
                                             MoreInfoClickListener moreInfoClickListener) {
+        super(watchedMoviesList, false);
         this.watchedMoviesList = watchedMoviesList;
         this.onRemoveClickListener = onRemoveClickListener;
         this.moreInfoClickListener = moreInfoClickListener;
@@ -51,15 +50,9 @@ public class WatchedMoviesRecyclerViewAdapter extends
         watchedMoviesViewHolder.mWatched.setVisibility(View.GONE);
         watchedMoviesViewHolder.mMovieTitle.setText(watchedMoviesList.get(i).getTitle());
         watchedMoviesViewHolder.mReleaseDate.setText(watchedMoviesList.get(i).getReleaseDate());
-        watchedMoviesViewHolder.mGenre.setText(Utils.getGenreList((RealmList<Integer>) watchedMoviesList.get(i).getGenreIds()));
+        watchedMoviesViewHolder.mGenre.setText(Utils.getGenreList(watchedMoviesList.get(i).getGenreIds()));
         watchedMoviesViewHolder.mMoreInfo.setOnClickListener(v ->
-                moreInfoClickListener.onMoreInfoClicked(watchedMoviesList.get(i).getOverview(),
-                        watchedMoviesList.get(i).getPosterPath(),
-                        watchedMoviesList.get(i).getVoteAverage(),
-                        watchedMoviesList.get(i).getId(),
-                        watchedMoviesList.get(i).getTitle(),
-                        watchedMoviesList.get(i).getReleaseDate(),
-                        (RealmList<Integer>) watchedMoviesList.get(i).getGenreIds()));
+                moreInfoClickListener.onMoreInfoClicked(watchedMoviesList.get(i)));
 
         if (watchedMoviesList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
             Glide.with(watchedMoviesViewHolder.mPosterPath.getContext())
@@ -70,6 +63,16 @@ public class WatchedMoviesRecyclerViewAdapter extends
                     .load(BuildConfig.POSTER_PATH_URL_W185 + watchedMoviesList.get(i).getPosterPath())
                     .into(watchedMoviesViewHolder.mPosterPath);
         }
+
+        setFrame(watchedMoviesViewHolder);
+    }
+
+    @Override
+    public int getItemCount() {
+        return watchedMoviesList.size();
+    }
+
+    private void setFrame(@NonNull WatchedMoviesViewHolder watchedMoviesViewHolder) {
         Glide.with(watchedMoviesViewHolder.mBlackTrackLeft.getContext())
                 .load(R.drawable.movie_track_left)
                 .into(watchedMoviesViewHolder.mBlackTrackLeft);
@@ -78,15 +81,10 @@ public class WatchedMoviesRecyclerViewAdapter extends
                 .into(watchedMoviesViewHolder.mBlackTrackRight);
     }
 
-    @Override
-    public int getItemCount() {
-        return watchedMoviesList.size();
-    }
-
     public void deleteItem(int position) {
-        onRemoveClickListener.onMovieRemoved(watchedMoviesList.get(position).getId());
-//        watchedMoviesList.re(position);
         notifyItemRemoved(position);
+//        notifyItemChanged(position);
+        onRemoveClickListener.onMovieRemoved(watchedMoviesList.get(position).getId());
     }
 
     class WatchedMoviesViewHolder extends RecyclerView.ViewHolder {
@@ -106,8 +104,8 @@ public class WatchedMoviesRecyclerViewAdapter extends
         ImageView mBlackTrackRight;
         @BindView(R.id.bt_more_info)
         Button mMoreInfo;
-        @BindView(R.id.cb_watched)
-        CheckBox mWatched;
+        @BindView(R.id.iv_watched)
+        ImageView mWatched;
         //endregion
 
         private WatchedMoviesViewHolder(@NonNull View itemView) {
@@ -121,7 +119,6 @@ public class WatchedMoviesRecyclerViewAdapter extends
     }
 
     public interface MoreInfoClickListener {
-        void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
-                               String title, String releaseDate, RealmList<Integer> moviesResults);
+        void onMoreInfoClicked(MoviesResult movieResult);
     }
 }

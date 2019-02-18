@@ -21,11 +21,10 @@ import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmList;
-import io.realm.RealmResults;
+import io.realm.OrderedRealmCollection;
 
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
-        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnIMDBClickListener {
+        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
 
     private DBHelper DBHelper;
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
@@ -34,6 +33,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     RecyclerView mWatchedMoviesRecyclerView;
     @BindView(R.id.tv_empty_layout)
     TextView mEmptyLayout;
+    private MoviesResult movieResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +41,22 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         setContentView(R.layout.activity_watched_movies);
         ButterKnife.bind(this);
 
+        if (savedInstanceState != null && savedInstanceState.getSerializable("Movie") != null) {
+            movieResult = (MoviesResult) savedInstanceState.getSerializable("Movie");
+            moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+            moreInfoDialog.setData(movieResult);
+            moreInfoDialog.setOnExternalWebPageClickListener(this);
+            moreInfoDialog.show();
+        }
+
+        setLayoutDependingOnOrientation();
+    }
+
+    private void setLayoutDependingOnOrientation() {
         DBHelper = new DBHelper();
-        RealmResults<MoviesResult> watchedMovies = DBHelper.getWatchedMovies();
+        OrderedRealmCollection<MoviesResult> watchedMovies = DBHelper.getWatchedMovies();
         int currentOrientation = getResources().getConfiguration().orientation;
         RecyclerView.LayoutManager layoutManager = null;
-
         if (watchedMovies.isEmpty()) {
             showEmptyLayout();
         } else if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -66,7 +77,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         finish();
     }
 
-    private void setupRecyclerViewWatchedMovies(RealmResults<MoviesResult> watchedMovies) {
+    private void setupRecyclerViewWatchedMovies(OrderedRealmCollection<MoviesResult> watchedMovies) {
         watchedMoviesRecyclerViewAdapter = new WatchedMoviesRecyclerViewAdapter(watchedMovies, this, this);
         mWatchedMoviesRecyclerView.setAdapter(watchedMoviesRecyclerViewAdapter);
         ItemTouchHelper itemTouchHelper = new
@@ -85,12 +96,29 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     @Override
-    public void onMoreInfoClicked(String overview, String posterPath, int voteAverage, int movieID,
-                                  String title, String releaseDate, RealmList<Integer> movieList) {
-        moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(overview, posterPath, voteAverage, movieID, title, releaseDate, movieList);
-        moreInfoDialog.setOnIMDBClickListener(this);
+    public void onMoreInfoClicked(MoviesResult movieResult) {
+        moreInfoDialog = new MoreInfoDialog(this,
+                android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        this.movieResult = movieResult;
+        moreInfoDialog.setData(this.movieResult);
+        moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (moreInfoDialog != null) {
+            moreInfoDialog.dismiss();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
+            outState.putSerializable("Movie", movieResult);
+        }
     }
 
     @Override
@@ -109,4 +137,3 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         startActivity(browserIntent);
     }
 }
-

@@ -3,8 +3,6 @@
     <string name="movies">MOVIES</string>
     <string name="tv_shows">TV SHOWS</string>
     <string name="more_info">MORE INFO</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="load_more">load more</string>
     <string name="watched_movies">Watched Movies</string>
     <string name="watched_tv_shows">Watched TV Shows</string>

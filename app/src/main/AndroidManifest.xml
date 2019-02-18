@@ -24,9 +24,8 @@
         <activity
             android:name=".MoviesActivity"
             android:configChanges="orientation" />
-        <activity android:name=".WatchedMoviesActivity">
+        <activity android:name=".WatchedMoviesActivity"/>
 
-        </activity>
     </application>
 
 </manifest>
