@@ -12,7 +12,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MoviesUpcomingFragment extends BaseFragment {
+public class MoviesUpcomingFragment extends MoviesBaseFragment {
 
     protected void loadMovies() {
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
@@ -21,7 +21,7 @@ public class MoviesUpcomingFragment extends BaseFragment {
             @Override
             public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
                 if (response.code() == 200) {
-                    moviesRecyclerViewAdapter.setData(response.body().getResults());
+                    moviesRecyclerViewAdapter.setData(response.body().getResults(),true);
                 } else if (response.code() == 401) {
                     Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
                 } else if (response.code() == 404) {

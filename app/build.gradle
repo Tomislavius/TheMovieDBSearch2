@@ -17,6 +17,7 @@ android {
         buildConfigField "String", "POSTER_PATH_URL_W300", '"https://image.tmdb.org/t/p/w300/"'
         buildConfigField "String", "BASE_URL_IMDB", '"https://www.imdb.com/title/"'
         buildConfigField "String", "BASE_URL_TMDB", '"https://www.themoviedb.org/movie/"'
+        buildConfigField "String", "BASE_URL_TMDB_TV_SHOW", '"https://www.themoviedb.org/tv/"'
     }
     buildTypes {
         release {

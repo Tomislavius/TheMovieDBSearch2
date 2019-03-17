@@ -20,18 +20,20 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.OrderedRealmCollection;
 import io.realm.RealmResults;
 
 public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    //region Fields
     private static final int TYPE_BUTTON = 1;
     private static final int TYPE_ITEM = 0;
     private List<MoviesResult> moviesResultList = new ArrayList<>(0);
-    private OrderedRealmCollection<MoviesResult> watchedMovies;
+    private RealmResults<MoviesResult> watchedMovies;
     private OnBindClickListener onBindClickListener;
+    private boolean isMovie;
+    //endregion
 
-    public MoviesRecyclerViewAdapter(OrderedRealmCollection<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
+    public MoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMovies, OnBindClickListener onBindClickListener) {
         this.watchedMovies = watchedMovies;
         this.onBindClickListener = onBindClickListener;
     }
@@ -51,33 +53,68 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i) {
 
-        if (moviesViewHolder instanceof MoviesViewHolder) {
+        if (isMovie) {
+            if (moviesViewHolder instanceof MoviesViewHolder) {
 
-            ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getTitle());
-            ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
-            ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList(moviesResultList.get(i).getGenreIds()));
+                ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getTitle());
+                ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getReleaseDate());
+                ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList(moviesResultList.get(i).getGenreIds()));
 
-            if (moviesResultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
-                Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
-                        .load(R.drawable.no_image_available)
-                        .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                if (moviesResultList.get(i).getPosterPath() == null ||
+                        moviesResultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
+                    Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
+                            .load(R.drawable.no_image_available)
+                            .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                } else {
+                    Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
+                            .load(BuildConfig.POSTER_PATH_URL_W185 + moviesResultList.get(i).getPosterPath())
+                            .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                }
+
+                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, true);
+
+                ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(null);
+
+                setButtonWatched(moviesViewHolder, i, true);
+
+                setFrame((MoviesViewHolder) moviesViewHolder);
+
             } else {
-                Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
-                        .load(BuildConfig.POSTER_PATH_URL_W185 + moviesResultList.get(i).getPosterPath())
-                        .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                setLoadMore((LoadMoreViewHolder) moviesViewHolder);
             }
 
-            setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i);
-
-            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(null);
-
-            setButtonWatched(moviesViewHolder, i);
-
-            setFrame((MoviesViewHolder) moviesViewHolder);
-
         } else {
-            setLoadMore((LoadMoreViewHolder) moviesViewHolder);
+            if (moviesViewHolder instanceof MoviesViewHolder) {
+
+                ((MoviesViewHolder) moviesViewHolder).mMovieTitle.setText(moviesResultList.get(i).getName());
+                ((MoviesViewHolder) moviesViewHolder).mReleaseDate.setText(moviesResultList.get(i).getFirstAirDate());
+                ((MoviesViewHolder) moviesViewHolder).mGenre.setText(Utils.getGenreList(moviesResultList.get(i).getGenreIds()));
+
+                if (moviesResultList.get(i).getPosterPath() == null ||
+                        moviesResultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
+                    Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
+                            .load(R.drawable.no_image_available)
+                            .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                } else {
+                    Glide.with(((MoviesViewHolder) moviesViewHolder).mPosterPath.getContext())
+                            .load(BuildConfig.POSTER_PATH_URL_W185 + moviesResultList.get(i).getPosterPath())
+                            .into(((MoviesViewHolder) moviesViewHolder).mPosterPath);
+                }
+
+                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, false);
+
+                ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(null);
+
+                setButtonWatched(moviesViewHolder, i, false);
+
+                setFrame((MoviesViewHolder) moviesViewHolder);
+
+            } else {
+                setLoadMore((LoadMoreViewHolder) moviesViewHolder);
+            }
+
         }
+
     }
 
     @Override
@@ -104,8 +141,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .mButtonLoadMore.setOnClickListener(v -> onBindClickListener.onLoadMoreClicked());
     }
 
-    private void setButtonWatched(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i) {
+    private void setButtonWatched(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i, boolean isMovie) {
         if (watchedMovies.size() == 0) {
+            moviesResultList.get(i).setChecked(false);
             loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
         } else {
             for (int j = 0; j < watchedMovies.size(); j++) {
@@ -124,21 +162,39 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             }
         }
 
-        ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(v -> {
-            if (moviesResultList.get(i).isChecked()) {
-                moviesResultList.get(i).setChecked(false);
-            } else {
-                moviesResultList.get(i).setChecked(true);
-            }
-            onBindClickListener.onCheckedChanged(moviesResultList.get(i).isChecked()
-                    , moviesResultList.get(moviesViewHolder.getAdapterPosition()));
-            if (moviesResultList.get(i).isChecked()) {
-                loadWatchedImage(moviesViewHolder, R.drawable.watched_enabled);
-            } else {
-                loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
-            }
-        });
+        if (isMovie) {
+            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(v -> {
+                if (moviesResultList.get(i).isChecked()) {
+                    moviesResultList.get(i).setChecked(false);
+                } else {
+                    moviesResultList.get(i).setChecked(true);
+                }
+                onBindClickListener.onCheckedChanged(moviesResultList.get(i).isChecked()
+                        , moviesResultList.get(moviesViewHolder.getAdapterPosition()));
+                if (moviesResultList.get(i).isChecked()) {
+                    loadWatchedImage(moviesViewHolder, R.drawable.watched_enabled);
+                } else {
+                    loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
+                }
+            });
+        } else {
+            ((MoviesViewHolder) moviesViewHolder).mWatched.setOnClickListener(v -> {
+                if (moviesResultList.get(i).isChecked()) {
+                    moviesResultList.get(i).setChecked(false);
+                } else {
+                    moviesResultList.get(i).setChecked(true);
+                }
+                onBindClickListener.onCheckedChanged(moviesResultList.get(i).isChecked()
+                        , moviesResultList.get(moviesViewHolder.getAdapterPosition()));
+                if (moviesResultList.get(i).isChecked()) {
+                    loadWatchedImage(moviesViewHolder, R.drawable.watched_enabled);
+                } else {
+                    loadWatchedImage(moviesViewHolder, R.drawable.watched_disabled);
+                }
+            });
+        }
     }
+
 
     private void loadWatchedImage(@NonNull RecyclerView.ViewHolder moviesViewHolder, int p) {
         Glide.with(moviesViewHolder.itemView.getContext())
@@ -146,9 +202,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .into(((MoviesViewHolder) moviesViewHolder).mWatched);
     }
 
-    private void setMoreInfoClickListener(@NonNull MoviesViewHolder moviesViewHolder, int i) {
+    private void setMoreInfoClickListener(@NonNull MoviesViewHolder moviesViewHolder, int i, boolean isMovie) {
         moviesViewHolder.mMoreInfo.setOnClickListener(v -> onBindClickListener
-                .onMoreInfoClicked(moviesResultList.get(i)));
+                .onMoreInfoClicked(moviesResultList.get(i), isMovie));
     }
 
     private void setFrame(@NonNull MoviesViewHolder moviesViewHolder) {
@@ -160,12 +216,13 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .into(moviesViewHolder.mBlackTrackRight);
     }
 
-    public void refreshWatchedMoviesList(OrderedRealmCollection<MoviesResult> watchedMovies) {
+    public void refreshWatchedMoviesList(RealmResults<MoviesResult> watchedMovies) {
         this.watchedMovies = watchedMovies;
         notifyDataSetChanged();
     }
 
-    public void setData(List<MoviesResult> results) {
+    public void setData(List<MoviesResult> results, boolean isMovie) {
+        this.isMovie = isMovie;
         moviesResultList.addAll(results);
         notifyItemRangeInserted(getItemCount(), results.size());
     }
@@ -213,7 +270,7 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         void onLoadMoreClicked();
 
-        void onMoreInfoClicked(MoviesResult movieResult);
+        void onMoreInfoClicked(MoviesResult movieResult, boolean isMovie);
 
         void onCheckedChanged(boolean isChecked, MoviesResult moviesResult);
     }

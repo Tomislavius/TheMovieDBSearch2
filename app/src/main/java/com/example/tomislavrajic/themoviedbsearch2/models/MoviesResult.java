@@ -34,6 +34,10 @@ public class MoviesResult extends RealmObject implements Serializable {
     @Expose
     private String title;
 
+    @SerializedName("name")
+    @Expose
+    private String name;
+
     @SerializedName("popularity")
     @Expose
     private Double popularity;
@@ -70,7 +74,17 @@ public class MoviesResult extends RealmObject implements Serializable {
     @Expose
     private String releaseDate;
 
-    private boolean isChecked;
+    @SerializedName("first_air_date")
+    @Expose
+    private String firstAirDate;
+
+    @SerializedName("isChecked")
+    @Expose
+    private Boolean isChecked;
+
+    @SerializedName("isMovie")
+    @Expose
+    private Boolean isMovie;
     //endregion
 
     //region Getters and Setters
@@ -80,10 +94,6 @@ public class MoviesResult extends RealmObject implements Serializable {
 
     public String getPosterPath() {
         return posterPath;
-    }
-
-    public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
     }
 
     public String getReleaseDate() {
@@ -115,5 +125,24 @@ public class MoviesResult extends RealmObject implements Serializable {
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
+    public boolean isMovie() {
+        return isMovie;
+    }
+
+    public void setMovie(boolean movie) {
+        isMovie = movie;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFirstAirDate() {
+        if (firstAirDate.length() > 0) {
+            return "Year: " + firstAirDate.substring(0, 4);
+        } else return "Unknown";
+    }
+
     //endregion
 }

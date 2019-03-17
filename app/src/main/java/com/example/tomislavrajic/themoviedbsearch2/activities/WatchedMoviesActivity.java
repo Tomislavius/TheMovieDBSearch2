@@ -1,4 +1,4 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
+import com.example.tomislavrajic.themoviedbsearch2.R;
+import com.example.tomislavrajic.themoviedbsearch2.SwipeToDeleteCallback;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedMoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
@@ -26,7 +29,7 @@ import io.realm.RealmResults;
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
         WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
 
-    private DBMovies DBMovies;
+    private DBMovies dbMovies;
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
     private MoreInfoDialog moreInfoDialog;
     private MoviesResult movieResult;
@@ -55,8 +58,8 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     private void setLayoutDependingOnOrientation() {
-        DBMovies = new DBMovies();
-        RealmResults<MoviesResult> watchedMovies = DBMovies.getWatchedMovies();
+        dbMovies = new DBMovies();
+        RealmResults<MoviesResult> watchedMovies = dbMovies.getWatchedList();
         int currentOrientation = getResources().getConfiguration().orientation;
         RecyclerView.LayoutManager layoutManager = null;
         if (watchedMovies.isEmpty()) {
@@ -94,7 +97,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onMovieRemoved(int id) {
-        DBMovies.deleteMovie(id);
+        dbMovies.deleteItem(id);
     }
 
     @Override
@@ -102,7 +105,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult, isMovie);
+        moreInfoDialog.setData(this.movieResult, true);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }

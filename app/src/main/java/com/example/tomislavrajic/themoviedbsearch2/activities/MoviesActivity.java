@@ -1,4 +1,4 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesFragmentPagerAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.fragments.BaseFragment;
 
@@ -42,7 +43,6 @@ public class MoviesActivity extends AppCompatActivity {
         MoviesFragmentPagerAdapter moviesFragmentPagerAdapter = new MoviesFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(moviesFragmentPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
-
     }
 
     @Override
@@ -75,8 +75,8 @@ public class MoviesActivity extends AppCompatActivity {
                 startActivityForResult(intent, WATCHED_MOVIES_REQUEST_CODE);
                 return true;
             case R.id.watched_tv_shows:
-//                intent = new Intent(this, WatchedMoviesTVShows.class);
-//                startActivity(intent);
+                intent = new Intent(this, WatchedTVShowsActivity.class);
+                startActivityForResult(intent, WATCHED_MOVIES_REQUEST_CODE);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

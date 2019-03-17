@@ -1,10 +1,11 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
+
+import com.example.tomislavrajic.themoviedbsearch2.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

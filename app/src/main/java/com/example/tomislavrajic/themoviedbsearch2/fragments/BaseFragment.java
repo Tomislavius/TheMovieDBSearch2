@@ -21,24 +21,25 @@ import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAd
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
 import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
+import com.example.tomislavrajic.themoviedbsearch2.utils.DBMovies;
+import com.example.tomislavrajic.themoviedbsearch2.utils.DBTVShows;
 
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmList;
 
 public abstract class BaseFragment extends Fragment implements MoviesRecyclerViewAdapter.OnBindClickListener,
         MoreInfoDialog.OnExternalWebPageClickListener {
 
-    int page;
-    private MoreInfoDialog moreInfoDialog;
-    protected MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     @BindView(R.id.rv_movies)
     RecyclerView mRecyclerView;
+
+    int page;
+    protected MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     RecyclerView.LayoutManager layoutManager;
-    DBHelper dbHelper;
+    private MoreInfoDialog moreInfoDialog;
+    private MoviesResult movieResult;
 
     @Nullable
     @Override
@@ -49,11 +50,10 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
         page = 1;
         ButterKnife.bind(this, view);
 
-        setLayoutDependingOnOrientation();
-
-        DBHelper preferences = new DBHelper();
-        moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(preferences.getWatchedMovies(), this);
+        moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(getDBHelper().getWatchedList(), this);
         mRecyclerView.setAdapter(moviesRecyclerViewAdapter);
+
+        setLayoutDependingOnOrientation();
 
         loadMovies();
 
@@ -64,6 +64,9 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         setLayoutDependingOnOrientation();
+        if (moreInfoDialog != null) {
+            moreInfoDialog.dismiss();
+        }
     }
 
     private void setLayoutDependingOnOrientation() {
@@ -78,29 +81,31 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
 
     protected abstract void loadMovies();
 
+    abstract DBHelper getDBHelper();
+
     public void refreshData() {
-        DBHelper DBHelper = new DBHelper();
-        moviesRecyclerViewAdapter.refreshWatchedMoviesList(DBHelper.getWatchedMovies());
+        moviesRecyclerViewAdapter.refreshWatchedMoviesList(getDBHelper().getWatchedList());
     }
 
     @Override
-    public void onMoreInfoClicked(MoviesResult movieResult) {
+    public void onMoreInfoClicked(MoviesResult movieResult, boolean isMovie) {
         moreInfoDialog = new MoreInfoDialog(Objects.requireNonNull(getContext()),
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        moreInfoDialog.setData(movieResult);
+        this.movieResult = movieResult;
+        moreInfoDialog.setData(this.movieResult, isMovie);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }
 
     @Override
     public void onCheckedChanged(boolean isChecked, MoviesResult moviesResult) {
-        DBHelper dbHelper = new DBHelper();
+
         if (isChecked) {
-            dbHelper.saveMovie(moviesResult);
-            Toast.makeText(getContext(), "Movie added to Watched Movies!", Toast.LENGTH_SHORT).show();
+            getDBHelper().saveItem(moviesResult);
+            Toast.makeText(getContext(), "Item added!", Toast.LENGTH_SHORT).show();
         } else {
-            dbHelper.deleteMovie(moviesResult.getId());
-            Toast.makeText(getContext(), "Movie removed from Watched Movies!", Toast.LENGTH_SHORT).show();
+            getDBHelper().deleteItem(moviesResult.getId());
+            Toast.makeText(getContext(), "Item removed!", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -111,7 +116,7 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     }
 
     @Override
-    public void onIMDBClicked(String imdbID) {
+    public void onIMDBClicked(String imdbID, boolean isMovie) {
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
@@ -119,18 +124,27 @@ public abstract class BaseFragment extends Fragment implements MoviesRecyclerVie
     }
 
     @Override
-    public void onTMDBClicked(int movieID) {
-        Intent browserIntent = new Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse(BuildConfig.BASE_URL_TMDB + movieID));
-        startActivity(browserIntent);
+    public void onTMDBClicked(int movieID, boolean isMovie) {
+        if (isMovie) {
+            Intent browserIntent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(BuildConfig.BASE_URL_TMDB + movieID));
+            startActivity(browserIntent);
+        } else {
+            Intent browserIntent = new Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(BuildConfig.BASE_URL_TMDB_TV_SHOW + movieID));
+            startActivity(browserIntent);
+        }
     }
 
     @Override
-    public void onDestroyView() {
+    public void onDestroy() {
         if (moreInfoDialog != null) {
             moreInfoDialog.setOnExternalWebPageClickListener(null);
+            moreInfoDialog.dismiss();
         }
-        super.onDestroyView();
+        super.onDestroy();
     }
+
 }

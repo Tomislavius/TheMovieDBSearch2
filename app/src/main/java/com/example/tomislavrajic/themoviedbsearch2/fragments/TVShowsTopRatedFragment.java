@@ -1,30 +1,40 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
+import android.widget.Toast;
 
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
+import com.example.tomislavrajic.themoviedbsearch2.models.Movies;
+import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
+import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 
-import com.example.tomislavrajic.themoviedbsearch2.R;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class TVShowsTopRatedFragment extends Fragment {
-
-
-    public TVShowsTopRatedFragment() {
-        // Required empty public constructor
-    }
-
+public class TVShowsTopRatedFragment extends TVShowsBaseFragment {
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_tvshows_top_rated, container, false);
+    protected void loadMovies() {
+        TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
+        service.getTopRatedTVShowsResult(BuildConfig.API_KEY, page).enqueue(new Callback<Movies>() {
+            @Override
+            public void onResponse(Call<Movies> call, Response<Movies> response) {
+                if (response.code() == 200) {
+                    moviesRecyclerViewAdapter.setData(response.body().getResults(), false);
+                } else if (response.code() == 401) {
+                    Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
+                } else if (response.code() == 404) {
+                    Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
+                } else if (response.code() == 500) {
+                    Toast.makeText(getContext(), "Internal error: Something went wrong, contact TMDb.", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Movies> call, Throwable t) {
+
+            }
+        });
     }
 
 }

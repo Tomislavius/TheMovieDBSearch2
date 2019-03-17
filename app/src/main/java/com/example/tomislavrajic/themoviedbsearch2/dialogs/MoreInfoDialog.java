@@ -3,7 +3,6 @@ package com.example.tomislavrajic.themoviedbsearch2.dialogs;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -23,9 +22,10 @@ import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
+import java.net.HttpURLConnection;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.RealmList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -86,38 +86,72 @@ public class MoreInfoDialog extends Dialog {
         this.onExternalWebPageClickListener = onExternalWebPageClickListener;
     }
 
-    public void setData(MoviesResult movieResult) {
-        Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(mPosterPath);
-        StringBuilder titleAndYear = new StringBuilder();
-        titleAndYear.append(movieResult.getTitle()).append(" (").append(movieResult.getReleaseDate().substring(6)).append(")");
-        setUserScore(movieResult.getVoteAverage());
-        tvOverview.setText(movieResult.getOverview());
-        tvShowMoreGenre.setText(Utils.getGenreList(movieResult.getGenreIds()));
-        showMoreTitle.setText(titleAndYear);
-        getExternalWebpage(movieResult.getId());
+    public void setData(MoviesResult movieResult, boolean isMovie) {
+        if (isMovie) {
+            Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(mPosterPath);
+            StringBuilder titleAndYear = new StringBuilder();
+            titleAndYear.append(movieResult.getTitle()).append(" (").append(movieResult.getReleaseDate().substring(6)).append(")");
+            setUserScore(movieResult.getVoteAverage());
+            tvOverview.setText(movieResult.getOverview());
+            tvShowMoreGenre.setText(Utils.getGenreList(movieResult.getGenreIds()));
+            showMoreTitle.setText(titleAndYear);
+            getExternalWebpage(movieResult.getId(), true);
+        } else {
+            Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(mPosterPath);
+            StringBuilder titleAndYear = new StringBuilder();
+            titleAndYear.append(movieResult.getName()).append(" (").append(movieResult.getFirstAirDate().substring(6)).append(")");
+            setUserScore(movieResult.getVoteAverage());
+            tvOverview.setText(movieResult.getOverview());
+            tvShowMoreGenre.setText(Utils.getGenreList(movieResult.getGenreIds()));
+            showMoreTitle.setText(titleAndYear);
+            getExternalWebpage(movieResult.getId(), false);
+        }
     }
 
-    private void getExternalWebpage(int movieID) {
-        TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
-        service.getExternalID(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
-            @Override
-            public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
-                if (response.code() == 200) {
-                    String imdbId = response.body().getImdbId();
-                    openIMDB.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId));
-                    openTMDB.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(movieID));
-                } else if (response.code() == 401) {
-                    Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
-                } else if (response.code() == 404) {
-                    Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
+    private void getExternalWebpage(int movieID, boolean isMovie) {
+        if (isMovie) {
+            TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
+            service.getExternalIDForMovie(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
+                @Override
+                public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
+                    if (response.code() == 200) {
+                        String imdbId = response.body().getImdbId();
+                        openIMDB.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, true));
+                        openTMDB.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(movieID, true));
+                    } else if (response.code() == 401) {
+                        Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
+                    } else if (response.code() == 404) {
+                        Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<ExternalID> call, Throwable t) {
-                Toast.makeText(getContext(), "Failed to connect.", Toast.LENGTH_LONG).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<ExternalID> call, Throwable t) {
+                    Toast.makeText(getContext(), "Failed to connect.", Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
+            service.getExternalIDForTVShow(movieID, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
+                @Override
+                public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
+                    if (response.code() == HttpURLConnection.HTTP_OK) {
+                        String imdbId = response.body().getImdbId();
+                        openIMDB.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, false));
+                        openTMDB.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(movieID, false));
+                    } else if (response.code() == 401) {
+                        Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
+                    } else if (response.code() == 404) {
+                        Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ExternalID> call, Throwable t) {
+                    Toast.makeText(getContext(), "Failed to connect.", Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private void setUserScore(int voteAverage) {
@@ -153,8 +187,8 @@ public class MoreInfoDialog extends Dialog {
 
     public interface OnExternalWebPageClickListener {
 
-        void onIMDBClicked(String imdbID);
+        void onIMDBClicked(String imdbID, boolean isMovie);
 
-        void onTMDBClicked(int movieID);
+        void onTMDBClicked(int movieID, boolean isMovie);
     }
 }

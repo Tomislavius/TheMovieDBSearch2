@@ -11,7 +11,7 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
 
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
 
-    SwipeToDeleteCallback(WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter) {
+    public SwipeToDeleteCallback(WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.watchedMoviesRecyclerViewAdapter = watchedMoviesRecyclerViewAdapter;
     }

@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.WatchedTVShowsActivity"></activity>
+        <activity android:name=".activities.TVShowsActivity" />
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,10 +24,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MoviesActivity"
+            android:name=".activities.MoviesActivity"
             android:configChanges="orientation" />
-        <activity android:name=".WatchedMoviesActivity"/>
-
+        <activity android:name=".activities.WatchedMoviesActivity" />
     </application>
 
 </manifest>
