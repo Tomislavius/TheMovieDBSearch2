@@ -3,6 +3,7 @@ package com.example.tomislavrajic.themoviedbsearch2;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.Button;
 
 import butterknife.BindView;
@@ -30,6 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         mButtonMovies.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, MoviesActivity.class);
+            startActivity(intent);
+        });
+
+        mButtonTVShows.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TVShowsActivity.class);
             startActivity(intent);
         });
     }

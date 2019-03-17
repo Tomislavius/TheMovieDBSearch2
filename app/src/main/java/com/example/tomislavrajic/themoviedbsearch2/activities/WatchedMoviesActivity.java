@@ -17,23 +17,25 @@ import android.widget.Toast;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedMoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
-import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
+import com.example.tomislavrajic.themoviedbsearch2.utils.DBMovies;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.realm.OrderedRealmCollection;
+import io.realm.RealmResults;
 
 public class WatchedMoviesActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
         WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
 
-    private DBHelper DBHelper;
+    private DBMovies DBMovies;
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
     private MoreInfoDialog moreInfoDialog;
+    private MoviesResult movieResult;
+
     @BindView(R.id.rv_watched_movies)
     RecyclerView mWatchedMoviesRecyclerView;
+
     @BindView(R.id.tv_empty_layout)
     TextView mEmptyLayout;
-    private MoviesResult movieResult;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +46,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         if (savedInstanceState != null && savedInstanceState.getSerializable("Movie") != null) {
             movieResult = (MoviesResult) savedInstanceState.getSerializable("Movie");
             moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            moreInfoDialog.setData(movieResult);
+            moreInfoDialog.setData(movieResult, true);
             moreInfoDialog.setOnExternalWebPageClickListener(this);
             moreInfoDialog.show();
         }
@@ -53,8 +55,8 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     private void setLayoutDependingOnOrientation() {
-        DBHelper = new DBHelper();
-        OrderedRealmCollection<MoviesResult> watchedMovies = DBHelper.getWatchedMovies();
+        DBMovies = new DBMovies();
+        RealmResults<MoviesResult> watchedMovies = DBMovies.getWatchedMovies();
         int currentOrientation = getResources().getConfiguration().orientation;
         RecyclerView.LayoutManager layoutManager = null;
         if (watchedMovies.isEmpty()) {
@@ -77,7 +79,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
         finish();
     }
 
-    private void setupRecyclerViewWatchedMovies(OrderedRealmCollection<MoviesResult> watchedMovies) {
+    private void setupRecyclerViewWatchedMovies(RealmResults<MoviesResult> watchedMovies) {
         watchedMoviesRecyclerViewAdapter = new WatchedMoviesRecyclerViewAdapter(watchedMovies, this, this);
         mWatchedMoviesRecyclerView.setAdapter(watchedMoviesRecyclerViewAdapter);
         ItemTouchHelper itemTouchHelper = new
@@ -92,15 +94,15 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
 
     @Override
     public void onMovieRemoved(int id) {
-        DBHelper.deleteMovie(id);
+        DBMovies.deleteMovie(id);
     }
 
     @Override
-    public void onMoreInfoClicked(MoviesResult movieResult) {
+    public void onMoreInfoClicked(MoviesResult movieResult, boolean isMovie) {
         moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult);
+        moreInfoDialog.setData(this.movieResult, isMovie);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }
@@ -122,7 +124,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     @Override
-    public void onIMDBClicked(String imdbID) {
+    public void onIMDBClicked(String imdbID, boolean isMovie) {
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
@@ -130,7 +132,7 @@ public class WatchedMoviesActivity extends AppCompatActivity implements WatchedM
     }
 
     @Override
-    public void onTMDBClicked(int movieID) {
+    public void onTMDBClicked(int movieID, boolean isMovie) {
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
                 Uri.parse(BuildConfig.BASE_URL_TMDB + movieID));

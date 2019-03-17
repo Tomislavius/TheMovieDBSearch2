@@ -1,4 +1,4 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
-public class DBHelper {
+public class HTTPStatusCodes {
 }
