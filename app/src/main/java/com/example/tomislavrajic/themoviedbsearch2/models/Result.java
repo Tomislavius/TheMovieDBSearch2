@@ -1,10 +1,10 @@
 package com.example.tomislavrajic.themoviedbsearch2.models;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
@@ -143,6 +143,5 @@ public class MoviesResult extends RealmObject implements Serializable {
             return "Year: " + firstAirDate.substring(0, 4);
         } else return "Unknown";
     }
-
     //endregion
 }
