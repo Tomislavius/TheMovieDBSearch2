@@ -11,8 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
+import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
+import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
 
 import butterknife.BindView;
@@ -21,13 +22,13 @@ import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
 
 public class WatchedMoviesRecyclerViewAdapter extends
-        RealmRecyclerViewAdapter<MoviesResult, WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
+        RealmRecyclerViewAdapter<Result, WatchedMoviesRecyclerViewAdapter.WatchedMoviesViewHolder> {
 
-    private RealmResults<MoviesResult> watchedMoviesList;
+    private RealmResults<Result> watchedMoviesList;
     private OnRemoveClickListener onRemoveClickListener;
     private MoreInfoClickListener moreInfoClickListener;
 
-    public WatchedMoviesRecyclerViewAdapter(RealmResults<MoviesResult> watchedMoviesList,
+    public WatchedMoviesRecyclerViewAdapter(RealmResults<Result> watchedMoviesList,
                                             OnRemoveClickListener onRemoveClickListener,
                                             MoreInfoClickListener moreInfoClickListener) {
         super(watchedMoviesList, false);
@@ -46,8 +47,8 @@ public class WatchedMoviesRecyclerViewAdapter extends
     @Override
     public void onBindViewHolder(@NonNull WatchedMoviesViewHolder watchedMoviesViewHolder, int i) {
         watchedMoviesViewHolder.mWatched.setVisibility(View.GONE);
-//        watchedMoviesViewHolder.mMovieTitle.setText(watchedMoviesList.get(i).getTitle());
-//        watchedMoviesViewHolder.mReleaseDate.setText(watchedMoviesList.get(i).getReleaseDate());
+//        watchedMoviesViewHolder.title.setText(watchedMoviesList.get(i).getTitle());
+//        watchedMoviesViewHolder.releaseDate.setText(watchedMoviesList.get(i).getReleaseDate());
         watchedMoviesViewHolder.mGenre.setText(Utils.getGenreList(watchedMoviesList.get(i).getGenreIds()));
         watchedMoviesViewHolder.mMoreInfo.setOnClickListener(v ->
                 moreInfoClickListener.onMoreInfoClicked(watchedMoviesList.get(i), true));
@@ -93,7 +94,7 @@ public class WatchedMoviesRecyclerViewAdapter extends
         TextView mMovieTitle;
         @BindView(R.id.tv_release_date)
         TextView mReleaseDate;
-        @BindView(R.id.iv_movie)
+        @BindView(R.id.iv_poster_image)
         ImageView mPosterPath;
         @BindView(R.id.tv_genre)
         TextView mGenre;
@@ -115,9 +116,5 @@ public class WatchedMoviesRecyclerViewAdapter extends
 
     public interface OnRemoveClickListener {
         void onMovieRemoved(int id);
-    }
-
-    public interface MoreInfoClickListener {
-        void onMoreInfoClicked(MoviesResult movieResult, boolean isMovie);
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Movies {
+public class TMDBResponseData {
 
     //region Fields
     @SerializedName("page")
@@ -22,10 +22,10 @@ public class Movies {
 
     @SerializedName("results")
     @Expose
-    private List<MoviesResult> results = null;
+    private List<Result> results = null;
     //endregion
 
-    public List<MoviesResult> getResults() {
+    public List<Result> getResults() {
         return results;
     }
 }

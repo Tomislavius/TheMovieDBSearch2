@@ -1,6 +1,6 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
+import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -26,22 +26,22 @@ public class DBTVShows extends DBHelper {
     }
 
     @Override
-    public RealmResults<MoviesResult> getWatchedList() {
-        RealmResults<MoviesResult> results = realm.where(MoviesResult.class).findAll();
+    public RealmResults<Result> getWatchedList() {
+        RealmResults<Result> results = realm.where(Result.class).findAll();
         results = results.sort("title");
         return results;
     }
 
     @Override
-    public void saveItem(MoviesResult moviesResult) {
+    public void saveItem(Result result) {
         realm.beginTransaction();
-        realm.insertOrUpdate(moviesResult);
+        realm.insertOrUpdate(result);
         realm.commitTransaction();
     }
 
     @Override
     public void deleteItem(int id) {
-        MoviesResult tvShow = realm.where(MoviesResult.class).equalTo("id", id).findFirst();
+        Result tvShow = realm.where(Result.class).equalTo("id", id).findFirst();
         if (tvShow != null) {
             realm.beginTransaction();
             tvShow.deleteFromRealm();

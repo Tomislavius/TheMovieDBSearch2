@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.ExternalID;
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
+import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
@@ -86,7 +86,7 @@ public class MoreInfoDialog extends Dialog {
         this.onExternalWebPageClickListener = onExternalWebPageClickListener;
     }
 
-    public void setData(MoviesResult movieResult, boolean isMovie) {
+    public void setData(Result movieResult, boolean isMovie) {
         if (isMovie) {
             Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(mPosterPath);
             StringBuilder titleAndYear = new StringBuilder();

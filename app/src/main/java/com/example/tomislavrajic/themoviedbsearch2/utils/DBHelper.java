@@ -1,12 +1,12 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
+import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 
 import io.realm.RealmResults;
 
 public abstract class DBHelper {
 
-    public abstract RealmResults<MoviesResult> getWatchedList();
-    public abstract void saveItem(MoviesResult moviesResult);
+    public abstract RealmResults<Result> getWatchedList();
+    public abstract void saveItem(Result result);
     public abstract void deleteItem(int id);
 }

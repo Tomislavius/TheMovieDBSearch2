@@ -10,7 +10,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class MoviesResult extends RealmObject implements Serializable {
+public class Result extends RealmObject implements Serializable {
 
     //region Fields
     @SerializedName("vote_count")
@@ -33,6 +33,10 @@ public class MoviesResult extends RealmObject implements Serializable {
     @SerializedName("title")
     @Expose
     private String title;
+
+    @SerializedName("media_type")
+    @Expose
+    private String mediaType;
 
     @SerializedName("name")
     @Expose
@@ -78,13 +82,15 @@ public class MoviesResult extends RealmObject implements Serializable {
     @Expose
     private String firstAirDate;
 
-    @SerializedName("isChecked")
+    @SerializedName("profile_path")
     @Expose
-    private Boolean isChecked;
+    private String profilePath;
 
-    @SerializedName("isMovie")
-    @Expose
+    @Expose(serialize = false, deserialize = false)
     private Boolean isMovie;
+
+    @Expose(serialize = false, deserialize = false)
+    private Boolean isChecked;
     //endregion
 
     //region Getters and Setters
@@ -142,6 +148,18 @@ public class MoviesResult extends RealmObject implements Serializable {
         if (firstAirDate.length() > 0) {
             return "Year: " + firstAirDate.substring(0, 4);
         } else return "Unknown";
+    }
+
+    public String getProfilePath() {
+        return profilePath;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public Double getPopularity() {
+        return popularity;
     }
     //endregion
 }

@@ -4,8 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +15,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
+import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.SwipeToDeleteCallback;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedMoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
-import com.example.tomislavrajic.themoviedbsearch2.models.MoviesResult;
-import com.example.tomislavrajic.themoviedbsearch2.utils.DBMovies;
+import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.DBTVShows;
 
 import butterknife.BindView;
@@ -28,11 +28,11 @@ import butterknife.ButterKnife;
 import io.realm.RealmResults;
 
 public class WatchedTVShowsActivity extends AppCompatActivity implements WatchedMoviesRecyclerViewAdapter.OnRemoveClickListener,
-        WatchedMoviesRecyclerViewAdapter.MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
+        MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
 
     private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
     private MoreInfoDialog moreInfoDialog;
-    private MoviesResult movieResult;
+    private Result movieResult;
     private DBTVShows dbTVShows;
 
     @BindView(R.id.rv_watched_movies)
@@ -50,9 +50,9 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
         dbTVShows = DBTVShows.getInstance();
 
         if (savedInstanceState != null && savedInstanceState.getSerializable("Movie") != null) {
-            movieResult = (MoviesResult) savedInstanceState.getSerializable("Movie");
+            movieResult = (Result) savedInstanceState.getSerializable("Movie");
             moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            moreInfoDialog.setData(movieResult, true);
+            moreInfoDialog.setData(movieResult, false);
             moreInfoDialog.setOnExternalWebPageClickListener(this);
             moreInfoDialog.show();
         }
@@ -61,7 +61,7 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     }
 
     private void setLayoutDependingOnOrientation() {
-        RealmResults<MoviesResult> watchedTVShows = dbTVShows.getWatchedList();
+        RealmResults<Result> watchedTVShows = dbTVShows.getWatchedList();
         int currentOrientation = getResources().getConfiguration().orientation;
         RecyclerView.LayoutManager layoutManager = null;
         if (watchedTVShows.isEmpty()) {
@@ -84,7 +84,7 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
         finish();
     }
 
-    private void setupRecyclerViewWatchedMovies(RealmResults<MoviesResult> watchedMovies) {
+    private void setupRecyclerViewWatchedMovies(RealmResults<Result> watchedMovies) {
         watchedMoviesRecyclerViewAdapter = new WatchedMoviesRecyclerViewAdapter(watchedMovies, this, this);
         mWatchedMoviesRecyclerView.setAdapter(watchedMoviesRecyclerViewAdapter);
         ItemTouchHelper itemTouchHelper = new
@@ -103,11 +103,11 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     }
 
     @Override
-    public void onMoreInfoClicked(MoviesResult movieResult, boolean isMovie) {
+    public void onMoreInfoClicked(Result movieResult, boolean isMovie) {
         moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult,false);
+        moreInfoDialog.setData(this.movieResult, false);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }

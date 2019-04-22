@@ -1,12 +1,16 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
-
+import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.models.Movies;
+import com.example.tomislavrajic.themoviedbsearch2.R;
+import com.example.tomislavrajic.themoviedbsearch2.models.TMDBResponseData;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
+import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
+
+import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -17,25 +21,27 @@ public class TVShowsOnTVFragment extends TVShowsBaseFragment {
     @Override
     protected void loadMovies() {
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
-        service.getOnTVShowsResult(BuildConfig.API_KEY, page).enqueue(new Callback<Movies>() {
+
+        service.getOnTVShowsResult(BuildConfig.API_KEY, page).enqueue(new Callback<TMDBResponseData>() {
             @Override
-            public void onResponse(Call<Movies> call, Response<Movies> response) {
-                if (response.code() == 200) {
+            public void onResponse(Call<TMDBResponseData> call, Response<TMDBResponseData> response) {
+                if (response.isSuccessful()) {
                     moviesRecyclerViewAdapter.setData(response.body().getResults(), false);
-                } else if (response.code() == 401) {
-                    Toast.makeText(getContext(), "Invalid API key: You must be granted a valid key.", Toast.LENGTH_LONG).show();
-                } else if (response.code() == 404) {
-                    Toast.makeText(getContext(), "The resource you requested could not be found.", Toast.LENGTH_LONG).show();
-                } else if (response.code() == 500) {
-                    Toast.makeText(getContext(), "Internal error: Something went wrong, contact TMDb.", Toast.LENGTH_LONG).show();
+                } else {
+                    try {
+                        JSONObject jObjError = new JSONObject(response.errorBody().string());
+                        String errorMessage = Utils.getErrorMessage(jObjError.getString("status_code"));
+                        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 
             @Override
-            public void onFailure(Call<Movies> call, Throwable t) {
-
+            public void onFailure(@NonNull Call<TMDBResponseData> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_LONG).show();
             }
         });
     }
-
 }

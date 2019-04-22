@@ -14,7 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activities.WatchedTVShowsActivity"></activity>
+        <activity
+            android:name=".activities.SearchActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+        </activity>
+        <activity android:name=".activities.BaseActivity" />
+        <activity android:name=".activities.WatchedTVShowsActivity" />
         <activity android:name=".activities.TVShowsActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>
@@ -23,9 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.MoviesActivity"
-            android:configChanges="orientation" />
+        <activity android:name=".activities.MoviesActivity" />
         <activity android:name=".activities.WatchedMoviesActivity" />
     </application>
 
