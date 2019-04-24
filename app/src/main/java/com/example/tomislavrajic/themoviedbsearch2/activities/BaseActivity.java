@@ -27,11 +27,13 @@ import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.OnExternalWebPageClickListener {
 
+    //region Fields
     public static final int REQUEST_CODE = 1313;
+    public static final String MOVIE = "Movie";
+
     MoreInfoDialog moreInfoDialog;
     Result movieResult;
 
-    //region View
     @BindView(R.id.test)
     TabLayout mTabLayout;
 
@@ -48,25 +50,13 @@ public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.On
 
         moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
-
-//        MoviesFragmentPagerAdapter moviesFragmentPagerAdapter = new MoviesFragmentPagerAdapter(getSupportFragmentManager());
-//        mViewPager.setAdapter(moviesFragmentPagerAdapter);
-//        mTabLayout.setupWithViewPager(mViewPager);
     }
-
-//    @Override
-//    public void onSaveInstanceState(@NonNull Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
-//            outState.putSerializable("Movie", movieResult);
-//        }
-//    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
-            outState.putSerializable("Movie", movieResult);
+            outState.putSerializable(MOVIE, movieResult);
         }
     }
 
@@ -109,21 +99,21 @@ public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.On
     }
 
     @Override
-    public void onIMDBClicked(String imdbID, boolean isMovie) {
+    public void onIMDBClicked(String imdbID, String isMovie) {
         Intent browserIntent = new Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(BuildConfig.BASE_URL_IMDB + imdbID));
+                Uri.parse(BuildConfig.BASE_URL_IMDB_TITLE + imdbID));
         startActivity(browserIntent);
     }
 
     @Override
-    public void onTMDBClicked(int movieID, boolean isMovie) {
-        if (isMovie) {
+    public void onTMDBClicked(int movieID, String isMovie) {
+        if (isMovie.equals("movie")) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse(BuildConfig.BASE_URL_TMDB + movieID));
+                    Uri.parse(BuildConfig.BASE_URL_TMDB_MOVIE + movieID));
             startActivity(browserIntent);
-        } else {
+        } else if (isMovie.equals("tv")) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_TMDB_TV_SHOW + movieID));

@@ -12,7 +12,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    //region Views
+    //region Fields
     @BindView(R.id.bt_movies)
     Button mButtonMovies;
 

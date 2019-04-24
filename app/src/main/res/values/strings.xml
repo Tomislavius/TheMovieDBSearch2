@@ -1,14 +1,18 @@
 <resources>
-    <string name="app_name">TheMovieDBSearch2</string>
+    <string name="app_name">TMDB SEARCH</string>
     <string name="movies">MOVIES</string>
     <string name="tv_shows">TV SHOWS</string>
     <string name="more_info">MORE INFO</string>
     <string name="load_more">load more</string>
     <string name="watched_movies">Watched Movies</string>
     <string name="watched_tv_shows">Watched TV Shows</string>
-    <string name="no_movies_added_to_watched_list">NO MOVIES ADDED TO WATCHED LIST</string>
+    <string name="no_movies_added_to_watched_list">NO ITEMS ADDED TO WATCHED LIST</string>
     <string name="not_rated">NR</string>
-    <string name="no_genre">No genre!</string>
+    <string name="no_genre">No genre</string>
     <string name="genre_title">Genre:</string>
     <string name="connection_error">Failed to connect!</string>
+    <string name="media_type">Media type:</string>
+    <string name="invalid_API">Invalid API key: You must be granted a valid key.</string>
+    <string name="invalid_request">The resource you requested could not be found.</string>
+    <string name="close_icon">x</string>
 </resources>

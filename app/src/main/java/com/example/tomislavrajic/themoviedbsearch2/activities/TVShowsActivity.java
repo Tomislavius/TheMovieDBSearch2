@@ -17,20 +17,19 @@ public class TVShowsActivity extends BaseActivity implements MoreInfoClickListen
         mViewPager.setAdapter(tvShowsFragmentPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable("Movie") != null) {
-            //TODO movie change to CONST
-            movieResult = (Result) savedInstanceState.getSerializable("Movie");
-            moreInfoDialog.setData(movieResult, false);
+        if (savedInstanceState != null && savedInstanceState.getSerializable(MOVIE) != null) {
+            movieResult = (Result) savedInstanceState.getSerializable(MOVIE);
+            moreInfoDialog.setData(movieResult, "tv");
             moreInfoDialog.show();
         }
     }
 
     @Override
-    public void onMoreInfoClicked(Result movieResult, boolean isMovie) {
+    public void onMoreInfoClicked(Result movieResult, String isMovie) {
         moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult, false);
+        moreInfoDialog.setData(this.movieResult, "tv");
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }

@@ -5,10 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesNowPlayingFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesPopularFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesTopRatedFragment;
-import com.example.tomislavrajic.themoviedbsearch2.fragments.MoviesUpcomingFragment;
 import com.example.tomislavrajic.themoviedbsearch2.fragments.TVShowsAiringTodayFragment;
 import com.example.tomislavrajic.themoviedbsearch2.fragments.TVShowsOnTVFragment;
 import com.example.tomislavrajic.themoviedbsearch2.fragments.TVShowsPopularFragment;

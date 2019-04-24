@@ -14,11 +14,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <activity
             android:name=".activities.SearchActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <activity android:name=".activities.BaseActivity" />
         <activity android:name=".activities.WatchedTVShowsActivity" />
         <activity android:name=".activities.TVShowsActivity" />

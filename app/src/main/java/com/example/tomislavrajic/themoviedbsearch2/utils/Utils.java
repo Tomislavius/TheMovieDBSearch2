@@ -147,6 +147,8 @@ public class Utils {
                 return "Invalid request token: The request token is either expired or invalid.";
             case "34":
                 return "The resource you requested could not be found.";
+            case "35":
+                return "Type name of MOVIE, TV show or person.";
             default:
                 return "Something went wrong!";
         }

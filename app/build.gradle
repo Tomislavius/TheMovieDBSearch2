@@ -15,8 +15,10 @@ android {
         buildConfigField "String", "API_KEY", '"bfe31b049b6fdbeeed14538670135250"'
         buildConfigField "String", "POSTER_PATH_URL_W185", '"https://image.tmdb.org/t/p/w185/"'
         buildConfigField "String", "POSTER_PATH_URL_W300", '"https://image.tmdb.org/t/p/w300/"'
-        buildConfigField "String", "BASE_URL_IMDB", '"https://www.imdb.com/title/"'
-        buildConfigField "String", "BASE_URL_TMDB", '"https://www.themoviedb.org/movie/"'
+        buildConfigField "String", "BASE_URL_IMDB_TITLE", '"https://www.imdb.com/title/"'
+        buildConfigField "String", "BASE_URL_IMDB_NAME", '"https://www.imdb.com/name/"'
+        buildConfigField "String", "BASE_URL_TMDB_MOVIE", '"https://www.themoviedb.org/movie/"'
+        buildConfigField "String", "BASE_URL_TMDB_PERSON", '"https://www.themoviedb.org/person/"'
         buildConfigField "String", "BASE_URL_TMDB_TV_SHOW", '"https://www.themoviedb.org/tv/"'
     }
     buildTypes {

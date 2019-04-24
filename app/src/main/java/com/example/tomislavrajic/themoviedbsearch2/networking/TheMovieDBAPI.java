@@ -28,6 +28,9 @@ public interface TheMovieDBAPI {
     @GET("tv/{tv_id}/external_ids")
     Call<ExternalID> getExternalIDForTVShow(@Path("tv_id") int tvID, @Query("api_key") String apiKey);
 
+    @GET("person/{person_id}/external_ids")
+    Call<ExternalID> getExternalIDForPerson(@Path("person_id") int personID, @Query("api_key") String apiKey);
+
     @GET("tv/popular")
     Call<TMDBResponseData> getPopularTVShowsResult(@Query("api_key") String apiKey, @Query("page") int page);
 
@@ -41,5 +44,5 @@ public interface TheMovieDBAPI {
     Call<TMDBResponseData> getAiringTodayShowsResult(@Query("api_key") String apiKey, @Query("page") int page);
 
     @GET("search/multi")
-    Call<TMDBResponseData> getMovieTvShowPeople(@Query("api_key") String apiKey, @Query("query") String query);
+    Call<TMDBResponseData> getMovieTvShowPeople(@Query("api_key") String apiKey, @Query("query") String query, @Query("page") int page);
 }

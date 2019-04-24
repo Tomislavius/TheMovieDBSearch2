@@ -7,15 +7,17 @@ import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesFragmentPagerA
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 
-public class MoviesActivity extends BaseActivity implements MoreInfoDialog.OnExternalWebPageClickListener, MoreInfoClickListener {
+public class MoviesActivity extends BaseActivity implements MoreInfoDialog.OnExternalWebPageClickListener,
+        MoreInfoClickListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable("Movie") != null) {
-            movieResult = (Result) savedInstanceState.getSerializable("Movie");
-            moreInfoDialog.setData(movieResult, true);
+        if (savedInstanceState != null && savedInstanceState.getSerializable(MOVIE) != null) {
+            movieResult = (Result) savedInstanceState.getSerializable(MOVIE);
+            moreInfoDialog.setData(movieResult, "movie");
             moreInfoDialog.show();
         }
 
@@ -25,11 +27,11 @@ public class MoviesActivity extends BaseActivity implements MoreInfoDialog.OnExt
     }
 
     @Override
-    public void onMoreInfoClicked(Result movieResult, boolean isMovie) {
+    public void onMoreInfoClicked(Result movieResult, String isMovie) {
         moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
         this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult, true);
+        moreInfoDialog.setData(this.movieResult, "movie");
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }

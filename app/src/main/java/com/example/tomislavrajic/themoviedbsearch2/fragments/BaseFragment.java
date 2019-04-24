@@ -19,20 +19,22 @@ import com.example.tomislavrajic.themoviedbsearch2.activities.TVShowsActivity;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.MoviesRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.DBHelper;
+import com.example.tomislavrajic.themoviedbsearch2.utils.OnBindClickListener;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public abstract class BaseFragment extends Fragment implements
-        MoviesRecyclerViewAdapter.OnBindClickListener {
+public abstract class BaseFragment extends Fragment implements OnBindClickListener {
 
-    @BindView(R.id.rv_movies)
-    RecyclerView mRecyclerView;
-
+    //region Field
+    public static final String STATUS_CODE = "status_code";
     int page;
     protected MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     RecyclerView.LayoutManager layoutManager;
-    public static final String STATUS_CODE = "status_code";
+
+    @BindView(R.id.rv_movies)
+    RecyclerView recyclerView;
+    //endregion
 
     @Nullable
     @Override
@@ -50,7 +52,8 @@ public abstract class BaseFragment extends Fragment implements
             moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(getDBHelper().getWatchedList(),
                     this, (TVShowsActivity) getActivity());
         }
-        mRecyclerView.setAdapter(moviesRecyclerViewAdapter);
+
+        recyclerView.setAdapter(moviesRecyclerViewAdapter);
 
         setLayoutDependingOnOrientation();
 
@@ -72,7 +75,7 @@ public abstract class BaseFragment extends Fragment implements
         } else {
             layoutManager = new LinearLayoutManager(getContext());
         }
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
     }
 
     protected abstract void loadMovies();
