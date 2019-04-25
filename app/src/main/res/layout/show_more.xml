@@ -38,7 +38,7 @@
         android:textAlignment="center"
         android:textColor="#F5F5F5"
         android:textSize="20sp"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />

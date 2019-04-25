@@ -1,4 +1,4 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.utils;
 
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;

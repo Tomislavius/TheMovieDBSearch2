@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
+import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.TMDBResponseData;
 import com.example.tomislavrajic.themoviedbsearch2.networking.ServiceGenerator;
 import com.example.tomislavrajic.themoviedbsearch2.networking.TheMovieDBAPI;
@@ -29,7 +30,7 @@ public class MoviesUpcomingFragment extends MoviesBaseFragment {
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
-                        String errorMessage = Utils.getErrorMessage(jObjError.getString("status_code"));
+                        String errorMessage = Utils.getErrorMessage(jObjError.getString(STATUS_CODE));
                         Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
                     } catch (Exception e) {
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -39,7 +40,7 @@ public class MoviesUpcomingFragment extends MoviesBaseFragment {
 
             @Override
             public void onFailure(@NonNull Call<TMDBResponseData> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), "Failed to connect.", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -40,7 +40,7 @@ public class MoviesNowPlayingFragment extends MoviesBaseFragment {
 
             @Override
             public void onFailure(@NonNull Call<TMDBResponseData> call, @NonNull Throwable t) {
-                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_SHORT).show();
             }
         });
     }

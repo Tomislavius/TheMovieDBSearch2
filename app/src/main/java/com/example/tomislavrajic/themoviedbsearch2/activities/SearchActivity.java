@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
+import com.example.tomislavrajic.themoviedbsearch2.utils.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.SearchRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
@@ -38,20 +39,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SearchActivity extends AppCompatActivity implements MoreInfoClickListener
-        , OnBindClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
+public class SearchActivity extends AppCompatActivity implements MoreInfoClickListener,
+        OnBindClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
+
+    public static final String STATUS_CODE = "status_code";
+    public static final String RESULTS = "results";
+    public static final String PAGE = "page";
+    public static final String ERROR = "35";
 
     //region Fields
-    public static final String STATUS_CODE = "status_code";
-
-    private int page;
-
-    private String userInput;
-    private ArrayList<Result> results = new ArrayList<>(0);
-    private MoreInfoDialog moreInfoDialog; //TODO Is this necessary?
+    private int page = 1;
+    private Result result;
+    private ArrayList<Result> results;
+    private MoreInfoDialog moreInfoDialog;
     private SearchRecyclerViewAdapter searchRecyclerViewAdapter;
-    private RecyclerView.LayoutManager layoutManager;
-
 
     @BindView(R.id.search_toolbar_tb)
     Toolbar searchToolbar;
@@ -76,28 +77,58 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
                 .load(R.drawable.tmdb)
                 .into(progressImage);
 
-        userInput = inputSearch.getText().toString();
-
-        loadResults();
+        loadResults(true);
     }
 
-    private void loadResults() {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_search);
+
+        ButterKnife.bind(this);
+
+        results = new ArrayList<>(0);
+        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(this, this);
+        recyclerView.setAdapter(searchRecyclerViewAdapter);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getSerializable(RESULTS) != null) {
+                results = (ArrayList<Result>) savedInstanceState.getSerializable(RESULTS);
+                searchRecyclerViewAdapter.setData(results, true);
+            }
+            if (savedInstanceState.getInt(PAGE) != 0) {
+                page = savedInstanceState.getInt(PAGE);
+            }
+            if (savedInstanceState.getSerializable(Result.MOVIE) != null) {
+                moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+                moreInfoDialog.setOnExternalWebPageClickListener(this);
+                result = (Result) savedInstanceState.getSerializable(Result.MOVIE);
+                moreInfoDialog.setData(result, result.getMediaType());
+                moreInfoDialog.show();
+            }
+        }
+
+        setLayoutDependingOnOrientation();
+        setSupportActionBar(searchToolbar);
+    }
+
+    private void loadResults(boolean shouldClearData) {
+//TODO solve bug with changing userinput
+        String userInput = inputSearch.getText().toString();
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
 
         service.getMovieTvShowPeople(BuildConfig.API_KEY, userInput, page).enqueue(new Callback<TMDBResponseData>() {
             @Override
-            public void onResponse(Call<TMDBResponseData> call, Response<TMDBResponseData> response) {
+            public void onResponse(@NonNull Call<TMDBResponseData> call, @NonNull Response<TMDBResponseData> response) {
 
+                Utils.hideKeyboard(SearchActivity.this);
                 progressImage.setVisibility(View.GONE);
 
                 if (response.isSuccessful()) {
-
-                    searchRecyclerViewAdapter.setData(response.body().getResults());
-
-//                    results.addAll(0, response.body().getResults());
-
+                    searchRecyclerViewAdapter.setData(response.body().getResults(), shouldClearData);
+                    results.addAll(response.body().getResults());
                 } else if (inputSearch.length() == 0) {
-                    String errorMessage = Utils.getErrorMessage("35");
+                    String errorMessage = Utils.getErrorMessage(ERROR);
                     Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                 } else try {
                     JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -116,48 +147,18 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
-
-//        if (savedInstanceState != null && savedInstanceState.getSerializable("results") != null) {
-//            results = (ArrayList<Result>) savedInstanceState.getSerializable("results");
-//            moreInfoDialog.setData(results, "results");
-//            moreInfoDialog.show();
-//        }
-
-        page = 1;
-
-        ButterKnife.bind(this);
-
-        searchRecyclerViewAdapter = new SearchRecyclerViewAdapter(results, this, this);
-
-        recyclerView.setAdapter(searchRecyclerViewAdapter);
-
-        if (results.size() != 0) {
-            Toast.makeText(this, "NOT EMPTY", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "EMPTY", Toast.LENGTH_SHORT).show();
-        }
-
-        setLayoutDependingOnOrientation();
-
-        setSupportActionBar(searchToolbar);
-    }
-
-    @Override
-    public void onMoreInfoClicked(Result movieResult, String isMovie) {
-        MoreInfoDialog moreInfoDialog = new MoreInfoDialog(this,
+    public void onMoreInfoClicked(Result result, String isMovie) {
+        moreInfoDialog = new MoreInfoDialog(this,
                 android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        Result movieResult1 = movieResult;
-        moreInfoDialog.setData(movieResult1, isMovie);
+        this.result = result;
+        moreInfoDialog.setData(this.result, isMovie);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }
 
     @Override
     public void onIMDBClicked(String imdbID, String mediaType) {
-        if (mediaType.equals("movie") || mediaType.equals("tv")) {
+        if (mediaType.equals(Result.MOVIE) || mediaType.equals(Result.TV_SHOW)) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_IMDB_TITLE + imdbID));
@@ -172,12 +173,12 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
 
     @Override
     public void onTMDBClicked(int iD, String mediaType) {
-        if (mediaType.equals("movie")) {
+        if (mediaType.equals(Result.MOVIE)) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_TMDB_MOVIE + iD));
             startActivity(browserIntent);
-        } else if (mediaType.equals("tv")) {
+        } else if (mediaType.equals(Result.TV_SHOW)) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_TMDB_TV_SHOW + iD));
@@ -192,12 +193,14 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
 
     @Override
     public void onLoadMoreClicked() {
+        Utils.hideKeyboard(this);
         page++;
-        loadResults();
+        loadResults(false);
     }
 
     private void setLayoutDependingOnOrientation() {
         int currentOrientation = getResources().getConfiguration().orientation;
+        RecyclerView.LayoutManager layoutManager;
         if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             layoutManager = new GridLayoutManager(this, 2);
         } else {
@@ -208,14 +211,17 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
 
     @Override
     public void onCheckedChanged(boolean isChecked, Result result) {
-
     }
 
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//        outState.putSerializable("results", results);
-//    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(RESULTS, results);
+        outState.putInt(PAGE, page);
+        if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
+            outState.putSerializable(Result.MOVIE, result);
+        }
+    }
 
     @Override
     public void onDestroy() {

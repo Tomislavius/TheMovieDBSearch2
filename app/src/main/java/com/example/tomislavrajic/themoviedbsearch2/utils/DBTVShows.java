@@ -8,8 +8,11 @@ import io.realm.RealmResults;
 
 public class DBTVShows extends DBHelper {
 
-    private Realm realm;
     private static DBTVShows INSTANCE;
+
+    //region Fields
+    private Realm realm;
+    //endregion
 
     public DBTVShows() {
         RealmConfiguration config = new RealmConfiguration.Builder()
@@ -28,7 +31,7 @@ public class DBTVShows extends DBHelper {
     @Override
     public RealmResults<Result> getWatchedList() {
         RealmResults<Result> results = realm.where(Result.class).findAll();
-        results = results.sort("title");
+        results = results.sort(DBHelper.TITLE);
         return results;
     }
 
@@ -41,7 +44,7 @@ public class DBTVShows extends DBHelper {
 
     @Override
     public void deleteItem(int id) {
-        Result tvShow = realm.where(Result.class).equalTo("id", id).findFirst();
+        Result tvShow = realm.where(Result.class).equalTo(DBHelper.ID, id).findFirst();
         if (tvShow != null) {
             realm.beginTransaction();
             tvShow.deleteFromRealm();

@@ -40,8 +40,7 @@ public class MoviesPopularFragment extends MoviesBaseFragment {
 
             @Override
             public void onFailure(@NonNull Call<TMDBResponseData> call, @NonNull Throwable t) {
-                //TODO Change all parameters in Toasts
-                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_SHORT).show();
             }
         });
     }

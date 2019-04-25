@@ -2,9 +2,7 @@ package com.example.tomislavrajic.themoviedbsearch2.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,18 +30,19 @@ import retrofit2.Response;
 
 public class MoreInfoDialog extends Dialog {
 
-    private OnExternalWebPageClickListener onExternalWebPageClickListener;
+
+    private static final String STATUS_CODE = "status_code";
 
     //region Fields
-    public static final String STATUS_CODE = "status_code";
-
     private StringBuilder titleAndYear = new StringBuilder();
+    private OnExternalWebPageClickListener onExternalWebPageClickListener;
 
     @BindView(R.id.tv_overview)
     TextView overview;
 
     @BindView(R.id.tv_user_score)
     TextView userScore;
+
     @BindView(R.id.user_score)
     TextView textUserScore;
 
@@ -91,76 +90,100 @@ public class MoreInfoDialog extends Dialog {
     //endregion
 
     //region Default constructors
-    public MoreInfoDialog(@NonNull Context context) {
-        super(context);
-        init();
-    }
+//    public MoreInfoDialog(@NonNull Context context) {
+//        super(context);
+//        init();
+//    }
 
     public MoreInfoDialog(@NonNull Context context, int themeResId) {
         super(context, themeResId);
         init();
     }
 
-    protected MoreInfoDialog(@NonNull Context context, boolean cancelable, @Nullable DialogInterface.OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
-        init();
-    }
+//    protected MoreInfoDialog(@NonNull Context context, boolean cancelable, @Nullable DialogInterface.OnCancelListener cancelListener) {
+//        super(context, cancelable, cancelListener);
+//        init();
+//    }
     //endregion
 
     public void setOnExternalWebPageClickListener(OnExternalWebPageClickListener onExternalWebPageClickListener) {
         this.onExternalWebPageClickListener = onExternalWebPageClickListener;
     }
 
-    public void setData(Result movieResult, String isMovie) {
-        if (isMovie.equals("movie")) {
+    public void setData(Result result, String mediaType) {
 
-            setMoreInfoData(movieResult, movieResult.getTitle(), movieResult.getReleaseDate(), "movie");
+        setPosterImage(result, mediaType);
+        getExternalWebpage(result.getId(), mediaType);
 
-        } else if (isMovie.equals("tv")) {
+        switch (mediaType) {
+            case Result.MOVIE:
 
-            setMoreInfoData(movieResult, movieResult.getName(), movieResult.getFirstAirDate(), "tv");
+                setMoreInfoData(result, result.getTitle(), result.getReleaseDate());
 
-        } else if (isMovie.equals("person")) {
+                break;
+            case Result.TV_SHOW:
 
-//            setMoreInfoData(movieResult, movieResult.getName(), movieResult.getFirstAirDate(), "person");
-            title.setVisibility(View.INVISIBLE);
-            textGenre.setVisibility(View.GONE);
-            textUserScore.setVisibility(View.GONE);
-            personName.setVisibility(View.VISIBLE);
-            userScore.setVisibility(View.GONE);
-            personName.setText(movieResult.getName());
-            Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getProfilePath()).into(posterImage);
-            getExternalWebpage(movieResult.getId(), movieResult.getMediaType());
+                setMoreInfoData(result, result.getName(), result.getFirstAirDate());
 
-            //TODO make condition for person
+                break;
+            case Result.PERSON:
+
+                title.setVisibility(View.INVISIBLE);
+                textGenre.setVisibility(View.GONE);
+                textUserScore.setVisibility(View.GONE);
+                personName.setVisibility(View.VISIBLE);
+                userScore.setVisibility(View.GONE);
+                personName.setText(result.getName());
+
+                break;
         }
     }
 
-    private void setMoreInfoData(Result movieResult, String getTitle, String releaseDate, String mediaType) {
+    private void setMoreInfoData(Result result, String getTitle, String releaseDate) {
 
-        Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + movieResult.getPosterPath()).into(posterImage);
-        getExternalWebpage(movieResult.getId(), mediaType);
-        setUserScore(movieResult.getVoteAverage());
-        overview.setText(movieResult.getOverview());
-        genre.setText(Utils.getGenreList(movieResult.getGenreIds()));
+        setUserScore(result.getVoteAverage());
+        overview.setText(result.getOverview());
+        genre.setText(Utils.getGenreList(result.getGenreIds()));
         titleAndYear.append(getTitle).append(" (").append(releaseDate.substring(6)).append(")");
         title.setText(titleAndYear);
+    }
 
+    private void setPosterImage(Result result, String mediaType) {
+
+        if (mediaType.equals(Result.MOVIE) || mediaType.equals(Result.TV_SHOW)) {
+            if (result.getPosterPath() == null ||
+                    result.getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W300 + "null")) {
+                Glide.with(getContext())
+                        .load(R.drawable.no_image_available)
+                        .into(posterImage);
+            } else {
+                Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + result.getPosterPath()).into(posterImage);
+            }
+        } else if (mediaType.equals(Result.PERSON)) {
+            if (result.getProfilePath() == null ||
+                    result.getProfilePath().equals(BuildConfig.POSTER_PATH_URL_W300 + "null")) {
+                Glide.with(getContext())
+                        .load(R.drawable.no_image_available)
+                        .into(posterImage);
+            } else {
+                Glide.with(getContext()).load(BuildConfig.POSTER_PATH_URL_W300 + result.getProfilePath()).into(posterImage);
+            }
+        }
     }
 
     private void getExternalWebpage(int iD, String mediaType) {
 
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
 
-        if (mediaType.equals("movie")) {
+        if (mediaType.equals(Result.MOVIE)) {
 
             service.getExternalIDForMovie(iD, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
                 @Override
-                public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
+                public void onResponse(@NonNull Call<ExternalID> call, @NonNull Response<ExternalID> response) {
                     if (response.isSuccessful()) {
                         String imdbId = response.body().getImdbId();
-                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, "movie"));
-                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, "movie"));
+                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, Result.MOVIE));
+                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, Result.MOVIE));
                     } else {
                         try {
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -173,19 +196,19 @@ public class MoreInfoDialog extends Dialog {
                 }
 
                 @Override
-                public void onFailure(Call<ExternalID> call, Throwable t) {
+                public void onFailure(@NonNull Call<ExternalID> call, @NonNull Throwable t) {
                     Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_SHORT).show();
                 }
             });
-        } else if (mediaType.equals("tv")) {
+        } else if (mediaType.equals(Result.TV_SHOW)) {
 
             service.getExternalIDForTVShow(iD, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
                 @Override
                 public void onResponse(@NonNull Call<ExternalID> call, @NonNull Response<ExternalID> response) {
                     if (response.isSuccessful()) {
                         String imdbId = response.body().getImdbId();
-                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, "tv"));
-                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, "tv"));
+                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, Result.TV_SHOW));
+                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, Result.TV_SHOW));
                     } else {
                         try {
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -206,11 +229,11 @@ public class MoreInfoDialog extends Dialog {
 
             service.getExternalIDForPerson(iD, BuildConfig.API_KEY).enqueue(new Callback<ExternalID>() {
                 @Override
-                public void onResponse(Call<ExternalID> call, Response<ExternalID> response) {
+                public void onResponse(@NonNull Call<ExternalID> call, @NonNull Response<ExternalID> response) {
                     if (response.isSuccessful()) {
                         String imdbId = response.body().getImdbId();
-                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, "person"));
-                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, "person"));
+                        openIMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onIMDBClicked(imdbId, Result.PERSON));
+                        openTMDBWebPage.setOnClickListener(v -> onExternalWebPageClickListener.onTMDBClicked(iD, Result.PERSON));
                     } else {
                         try {
                             JSONObject jObjError = new JSONObject(response.errorBody().string());
@@ -223,11 +246,10 @@ public class MoreInfoDialog extends Dialog {
                 }
 
                 @Override
-                public void onFailure(Call<ExternalID> call, Throwable t) {
+                public void onFailure(@NonNull Call<ExternalID> call, @NonNull Throwable t) {
                     Toast.makeText(getContext(), R.string.connection_error, Toast.LENGTH_LONG).show();
                 }
             });
-            //TODO solve for person
         }
     }
 
@@ -250,7 +272,7 @@ public class MoreInfoDialog extends Dialog {
             progressBarUserScoreGreen.setVisibility(View.VISIBLE);
             progressBarUserScoreGreen.setProgress(voteAverage);
         }
-        userScore.setText(String.valueOf(voteAverage) + "%");
+        userScore.setText(String.format("%s%%", String.valueOf(voteAverage)));
     }
 
     private void init() {

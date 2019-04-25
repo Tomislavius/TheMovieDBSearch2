@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
+import com.example.tomislavrajic.themoviedbsearch2.utils.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.Utils;
@@ -50,12 +50,13 @@ public class WatchedItemsRecyclerViewAdapter extends
     public void onBindViewHolder(@NonNull WatchedMoviesViewHolder watchedMoviesViewHolder, int i) {
         watchedMoviesViewHolder.watchedIcon.setVisibility(View.GONE);
         watchedMoviesViewHolder.genre.setText(Utils.getGenreList(watchedItemsList.get(i).getGenreIds()));
-        watchedMoviesViewHolder.moreInfoButton.setOnClickListener(v ->
-                moreInfoClickListener.onMoreInfoClicked(watchedItemsList.get(i), "movie"));
-
-        setPosterImage(watchedMoviesViewHolder, i);
 
         setFrame(watchedMoviesViewHolder);
+        setPosterImage(watchedMoviesViewHolder, i);
+
+        watchedMoviesViewHolder.moreInfoButton.setOnClickListener(v ->
+                moreInfoClickListener.onMoreInfoClicked(watchedItemsList.get(i), Result.MOVIE));
+
     }
 
     @Override

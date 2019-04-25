@@ -27,10 +27,9 @@ import butterknife.ButterKnife;
 
 public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.OnExternalWebPageClickListener {
 
-    //region Fields
     public static final int REQUEST_CODE = 1313;
-    public static final String MOVIE = "Movie";
 
+    //region Fields
     MoreInfoDialog moreInfoDialog;
     Result movieResult;
 
@@ -56,7 +55,7 @@ public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.On
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
-            outState.putSerializable(MOVIE, movieResult);
+            outState.putSerializable(Result.MOVIE, movieResult);
         }
     }
 
@@ -108,12 +107,12 @@ public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.On
 
     @Override
     public void onTMDBClicked(int movieID, String isMovie) {
-        if (isMovie.equals("movie")) {
+        if (isMovie.equals(Result.MOVIE)) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_TMDB_MOVIE + movieID));
             startActivity(browserIntent);
-        } else if (isMovie.equals("tv")) {
+        } else if (isMovie.equals(Result.TV_SHOW)) {
             Intent browserIntent = new Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse(BuildConfig.BASE_URL_TMDB_TV_SHOW + movieID));

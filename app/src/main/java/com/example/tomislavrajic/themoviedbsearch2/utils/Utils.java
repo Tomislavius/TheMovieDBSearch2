@@ -1,5 +1,9 @@
 package com.example.tomislavrajic.themoviedbsearch2.utils;
 
+import android.app.Activity;
+import android.content.Context;
+import android.view.inputmethod.InputMethodManager;
+
 import java.util.List;
 
 public class Utils {
@@ -152,5 +156,10 @@ public class Utils {
             default:
                 return "Something went wrong!";
         }
+    }
+
+    public static void hideKeyboard(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 }

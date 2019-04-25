@@ -17,7 +17,8 @@
 
         <activity
             android:name=".activities.SearchActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".activities.BaseActivity" />
         <activity android:name=".activities.WatchedTVShowsActivity" />
         <activity android:name=".activities.TVShowsActivity" />

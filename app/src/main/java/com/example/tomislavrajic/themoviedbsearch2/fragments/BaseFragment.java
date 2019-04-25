@@ -26,8 +26,9 @@ import butterknife.ButterKnife;
 
 public abstract class BaseFragment extends Fragment implements OnBindClickListener {
 
-    //region Field
     public static final String STATUS_CODE = "status_code";
+
+    //region Fields
     int page;
     protected MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     RecyclerView.LayoutManager layoutManager;
@@ -42,8 +43,8 @@ public abstract class BaseFragment extends Fragment implements OnBindClickListen
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movies, container, false);
 
-        page = 1;
         ButterKnife.bind(this, view);
+        page = 1;
 
         if (getActivity() instanceof MoviesActivity) {
             moviesRecyclerViewAdapter = new MoviesRecyclerViewAdapter(getDBHelper().getWatchedList(),
@@ -91,10 +92,10 @@ public abstract class BaseFragment extends Fragment implements OnBindClickListen
 
         if (isChecked) {
             getDBHelper().saveItem(result);
-            Toast.makeText(getContext(), "Item added!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.item_added, Toast.LENGTH_SHORT).show();
         } else {
             getDBHelper().deleteItem(result.getId());
-            Toast.makeText(getContext(), "Item removed!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.item_removed, Toast.LENGTH_SHORT).show();
         }
     }
 

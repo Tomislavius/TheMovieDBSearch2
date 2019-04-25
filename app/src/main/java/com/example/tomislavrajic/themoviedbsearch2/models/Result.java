@@ -12,6 +12,10 @@ import io.realm.annotations.PrimaryKey;
 
 public class Result extends RealmObject implements Serializable {
 
+    public static final String MOVIE = "movie";
+    public static final String TV_SHOW = "tv";
+    public static final String PERSON = "person";
+
     //region Fields
     @SerializedName("vote_count")
     @Expose
@@ -156,10 +160,6 @@ public class Result extends RealmObject implements Serializable {
 
     public String getMediaType() {
         return mediaType;
-    }
-
-    public Double getPopularity() {
-        return popularity;
     }
     //endregion
 }

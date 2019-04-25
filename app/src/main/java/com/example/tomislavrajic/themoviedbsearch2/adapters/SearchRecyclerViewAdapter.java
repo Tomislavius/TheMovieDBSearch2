@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
+import com.example.tomislavrajic.themoviedbsearch2.utils.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.OnBindClickListener;
@@ -25,23 +25,19 @@ import butterknife.ButterKnife;
 
 public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    //region Field
     private static final int TYPE_BUTTON = 1;
     private static final int TYPE_ITEM = 0;
 
-    private ArrayList<Result> results;
+    //region Fields
     private List<Result> resultList = new ArrayList<>(0);
     private MoreInfoClickListener moreInfoClickListener;
     private OnBindClickListener onBindClickListener;
     //endregion
 
-    public SearchRecyclerViewAdapter(ArrayList<Result> results,
-                                     MoreInfoClickListener moreInfoClickListener,
+    public SearchRecyclerViewAdapter(MoreInfoClickListener moreInfoClickListener,
                                      OnBindClickListener onBindClickListener) {
-        this.results = results;
         this.moreInfoClickListener = moreInfoClickListener;
         this.onBindClickListener = onBindClickListener;
-        setData(results);
     }
 
     @NonNull
@@ -62,68 +58,47 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
         if (viewHolder instanceof SearchViewHolder) {
-            if (resultList.get(i).getMediaType().equals("movie")) {
-                setFrame((SearchViewHolder) viewHolder);
-                ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getTitle());
-                ((SearchViewHolder) viewHolder).releaseDate.setText(resultList.get(i).getReleaseDate());
-                ((SearchViewHolder) viewHolder).genre.setText(Utils.getGenreList(resultList.get(i).getGenreIds()));
-                ((SearchViewHolder) viewHolder).mediaType.setText(resultList.get(i).getMediaType());
-                ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
-                        moreInfoClickListener.onMoreInfoClicked(resultList.get(i), "movie"));
+            setFrame((SearchViewHolder) viewHolder);
 
-                if (resultList.get(i).getPosterPath() == null ||
-                        resultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
-                    Glide.with(viewHolder.itemView.getContext())
-                            .load(R.drawable.no_image_available)
-                            .into(((SearchViewHolder) viewHolder).posterImage);
-                } else {
-                    loadPosterImage(resultList.get(i).getPosterPath(), ((SearchViewHolder) viewHolder));
-                }
+            switch (resultList.get(i).getMediaType()) {
+                case Result.MOVIE:
+                    ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getTitle());
+                    ((SearchViewHolder) viewHolder).releaseDate.setText(resultList.get(i).getReleaseDate());
+                    ((SearchViewHolder) viewHolder).genre.setText(Utils.getGenreList(resultList.get(i).getGenreIds()));
 
-            } else if (resultList.get(i).getMediaType().equals("tv")) {
-                setFrame((SearchViewHolder) viewHolder);
-                ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getName());
-                ((SearchViewHolder) viewHolder).releaseDate.setText(resultList.get(i).getFirstAirDate());
-                ((SearchViewHolder) viewHolder).genre.setText(Utils.getGenreList(resultList.get(i).getGenreIds()));
-                ((SearchViewHolder) viewHolder).mediaType.setText(resultList.get(i).getMediaType());
-                ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
-                        moreInfoClickListener.onMoreInfoClicked(resultList.get(i), "tv"));
+                    setMediaType((SearchViewHolder) viewHolder, i);
+                    setPosterImage(viewHolder, i);
 
-                if (resultList.get(i).getPosterPath() == null ||
-                        resultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
-                    Glide.with(viewHolder.itemView.getContext())
-                            .load(R.drawable.no_image_available)
-                            .into(((SearchViewHolder) viewHolder).posterImage);
-                } else {
-                    loadPosterImage(resultList.get(i).getPosterPath(), ((SearchViewHolder) viewHolder));
-                }
+                    ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
+                            moreInfoClickListener.onMoreInfoClicked(resultList.get(i), Result.MOVIE));
 
-            } else if (resultList.get(i).getMediaType().equals("person")) {
-                setFrame((SearchViewHolder) viewHolder);
-                ((SearchViewHolder) viewHolder).genre.setVisibility(View.GONE);
-                ((SearchViewHolder) viewHolder).textGenre.setVisibility(View.GONE);
+                    break;
+                case Result.TV_SHOW:
+                    ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getName());
+                    ((SearchViewHolder) viewHolder).releaseDate.setText(resultList.get(i).getFirstAirDate());
+                    ((SearchViewHolder) viewHolder).genre.setText(Utils.getGenreList(resultList.get(i).getGenreIds()));
 
-                ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getName());
-                ((SearchViewHolder) viewHolder).mediaType.setText(resultList.get(i).getMediaType());
-                ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
-                        moreInfoClickListener.onMoreInfoClicked(resultList.get(i), "person"));
+                    setMediaType((SearchViewHolder) viewHolder, i);
+                    setPosterImage(viewHolder, i);
 
-                if (resultList.get(i).getProfilePath() == null ||
-                        resultList.get(i).getProfilePath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
-                    Glide.with(viewHolder.itemView.getContext())
-                            .load(R.drawable.no_image_available)
-                            .into(((SearchViewHolder) viewHolder).posterImage);
-                } else {
-                    loadPosterImage(resultList.get(i).getProfilePath(), ((SearchViewHolder) viewHolder));
-                }
+                    ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
+                            moreInfoClickListener.onMoreInfoClicked(resultList.get(i), Result.TV_SHOW));
+
+                    break;
+                case Result.PERSON:
+                    ((SearchViewHolder) viewHolder).genre.setVisibility(View.GONE);
+                    ((SearchViewHolder) viewHolder).textGenre.setVisibility(View.GONE);
+                    ((SearchViewHolder) viewHolder).title.setText(resultList.get(i).getName());
+
+                    setMediaType((SearchViewHolder) viewHolder, i);
+                    setProfileImage(viewHolder, i);
+
+                    ((SearchViewHolder) viewHolder).moreInfoButton.setOnClickListener(v ->
+                            moreInfoClickListener.onMoreInfoClicked(resultList.get(i), Result.PERSON));
+
+                    break;
             }
         } else setLoadMore((LoadMoreViewHolder) viewHolder);
-    }
-
-    private void loadPosterImage(String path, SearchViewHolder searchViewHolder) {
-        Glide.with(searchViewHolder.itemView.getContext())
-                .load(BuildConfig.POSTER_PATH_URL_W185 + path)
-                .into(searchViewHolder.posterImage);
     }
 
     @Override
@@ -140,13 +115,43 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         }
     }
 
+    private void setMediaType(@NonNull SearchViewHolder viewHolder, int i) {
+        viewHolder.mediaType.setText(resultList.get(i).getMediaType());
+    }
+
+    private void setProfileImage(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        if (resultList.get(i).getProfilePath() == null ||
+                resultList.get(i).getProfilePath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
+            Glide.with(viewHolder.itemView.getContext())
+                    .load(R.drawable.no_image_available)
+                    .into(((SearchViewHolder) viewHolder).posterImage);
+        } else {
+            Glide.with(viewHolder.itemView.getContext()).
+                    load(BuildConfig.POSTER_PATH_URL_W185 + resultList.get(i).getProfilePath()).
+                    into(((SearchViewHolder) viewHolder).posterImage);
+        }
+    }
+
+    private void setPosterImage(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+        if (resultList.get(i).getPosterPath() == null ||
+                resultList.get(i).getPosterPath().equals(BuildConfig.POSTER_PATH_URL_W185 + "null")) {
+            Glide.with(viewHolder.itemView.getContext())
+                    .load(R.drawable.no_image_available)
+                    .into(((SearchViewHolder) viewHolder).posterImage);
+        } else {
+            Glide.with(viewHolder.itemView.getContext()).
+                    load(BuildConfig.POSTER_PATH_URL_W185 + resultList.get(i).getPosterPath()).
+                    into(((SearchViewHolder) viewHolder).posterImage);
+        }
+    }
+
     private void setLoadMore(LoadMoreViewHolder loadMore) {
         if (resultList.size() > 0) {
-            loadMore.mButtonLoadMore.setVisibility(View.VISIBLE);
+            loadMore.loadMoreButton.setVisibility(View.VISIBLE);
         } else {
-            loadMore.mButtonLoadMore.setVisibility(View.GONE);
+            loadMore.loadMoreButton.setVisibility(View.GONE);
         }
-        loadMore.mButtonLoadMore.setOnClickListener(v -> onBindClickListener.onLoadMoreClicked());
+        loadMore.loadMoreButton.setOnClickListener(v -> onBindClickListener.onLoadMoreClicked());
     }
 
     private void setFrame(@NonNull SearchViewHolder searchViewHolder) {
@@ -158,14 +163,18 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 .into(searchViewHolder.blackTrackRight);
     }
 
-    public void setData(List<Result> results) {
+    public void setData(List<Result> results, boolean shouldClearData) {
+        if (shouldClearData) {
+            resultList.clear();
+            notifyDataSetChanged();
+        }
         resultList.addAll(results);
         notifyItemRangeInserted(getItemCount(), results.size());
     }
 
     class SearchViewHolder extends RecyclerView.ViewHolder {
 
-        //region View
+        //region Fields
         @BindView(R.id.tv_movie_title)
         TextView title;
 
@@ -199,14 +208,17 @@ public class SearchRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
         private SearchViewHolder(@NonNull View itemView) {
             super(itemView);
+
             ButterKnife.bind(this, itemView);
         }
     }
 
     class LoadMoreViewHolder extends RecyclerView.ViewHolder {
 
+        //region Fields
         @BindView(R.id.bt_load_more)
-        Button mButtonLoadMore;
+        Button loadMoreButton;
+        //endregion
 
         LoadMoreViewHolder(@NonNull View itemView) {
             super(itemView);

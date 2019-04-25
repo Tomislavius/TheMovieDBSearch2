@@ -7,7 +7,10 @@ import io.realm.RealmResults;
 
 public class DBMovies extends DBHelper {
 
+
+    //region Fields
     private Realm realm;
+    //endregion
 
     public DBMovies() {
         realm = Realm.getDefaultInstance();
@@ -16,7 +19,7 @@ public class DBMovies extends DBHelper {
     @Override
     public RealmResults<Result> getWatchedList() {
         RealmResults<Result> results = realm.where(Result.class).findAll();
-        results = results.sort("title");
+        results = results.sort(DBHelper.TITLE);
         return results;
     }
 
@@ -29,7 +32,7 @@ public class DBMovies extends DBHelper {
 
     @Override
     public void deleteItem(int id) {
-        Result movie = realm.where(Result.class).equalTo("id", id).findFirst();
+        Result movie = realm.where(Result.class).equalTo(DBHelper.ID, id).findFirst();
         if (movie != null) {
             realm.beginTransaction();
             movie.deleteFromRealm();

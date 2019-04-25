@@ -15,9 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
+import com.example.tomislavrajic.themoviedbsearch2.utils.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
-import com.example.tomislavrajic.themoviedbsearch2.SwipeToDeleteCallback;
+import com.example.tomislavrajic.themoviedbsearch2.utils.SwipeToDeleteCallback;
 import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedItemsRecyclerViewAdapter;
 import com.example.tomislavrajic.themoviedbsearch2.dialogs.MoreInfoDialog;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
@@ -31,12 +31,9 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
         MoreInfoClickListener, MoreInfoDialog.OnExternalWebPageClickListener {
 
     //region Fields
-    public static final String MOVIE = "Movie";
-
     private DBTVShows dbTVShows;
-    private WatchedItemsRecyclerViewAdapter watchedItemsRecyclerViewAdapter;
     private MoreInfoDialog moreInfoDialog;
-    private Result movieResult;
+    private Result result;
 
     @BindView(R.id.rv_watched_movies)
     RecyclerView mWatchedMoviesRecyclerView;
@@ -49,14 +46,15 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watched_movies);
+
         ButterKnife.bind(this);
 
-        dbTVShows = DBTVShows.getInstance();//TODO check
+        dbTVShows = DBTVShows.getInstance();
 
-        if (savedInstanceState != null && savedInstanceState.getSerializable(MOVIE) != null) {
-            movieResult = (Result) savedInstanceState.getSerializable(MOVIE);
+        if (savedInstanceState != null && savedInstanceState.getSerializable(Result.TV_SHOW) != null) {
+            result = (Result) savedInstanceState.getSerializable(Result.TV_SHOW);
             moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-            moreInfoDialog.setData(movieResult, "tv");
+            moreInfoDialog.setData(result, Result.TV_SHOW);
             moreInfoDialog.setOnExternalWebPageClickListener(this);
             moreInfoDialog.show();
         }
@@ -71,12 +69,11 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     }
 
     private void setupRecyclerViewWatchedMovies(RealmResults<Result> watchedMovies) {
-        watchedItemsRecyclerViewAdapter = new WatchedItemsRecyclerViewAdapter(watchedMovies,
+        WatchedItemsRecyclerViewAdapter watchedItemsRecyclerViewAdapter = new WatchedItemsRecyclerViewAdapter(watchedMovies,
                 this, this);
 
         mWatchedMoviesRecyclerView.setAdapter(watchedItemsRecyclerViewAdapter);
-        ItemTouchHelper itemTouchHelper = new
-                ItemTouchHelper(new SwipeToDeleteCallback(watchedItemsRecyclerViewAdapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new SwipeToDeleteCallback(watchedItemsRecyclerViewAdapter));
         itemTouchHelper.attachToRecyclerView(mWatchedMoviesRecyclerView);
     }
 
@@ -88,8 +85,8 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     @Override
     public void onMoreInfoClicked(Result movieResult, String isMovie) {
         moreInfoDialog = new MoreInfoDialog(this, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-        this.movieResult = movieResult;
-        moreInfoDialog.setData(this.movieResult, "tv");
+        this.result = movieResult;
+        moreInfoDialog.setData(this.result, Result.TV_SHOW);
         moreInfoDialog.setOnExternalWebPageClickListener(this);
         moreInfoDialog.show();
     }
@@ -106,7 +103,7 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (moreInfoDialog != null && moreInfoDialog.isShowing()) {
-            outState.putSerializable(MOVIE, movieResult);
+            outState.putSerializable(Result.TV_SHOW, result);
         }
     }
 
@@ -135,17 +132,17 @@ public class WatchedTVShowsActivity extends AppCompatActivity implements Watched
         } else if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
             setupRecyclerViewWatchedMovies(watchedTVShows);
             layoutManager = new GridLayoutManager(this, 2);
-            Toast.makeText(this, "Swipe to remove!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.swipe_to_remove, Toast.LENGTH_SHORT).show();
         } else {
             setupRecyclerViewWatchedMovies(watchedTVShows);
             layoutManager = new LinearLayoutManager(this);
-            Toast.makeText(this, "Swipe to remove!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.swipe_to_remove, Toast.LENGTH_SHORT).show();
         }
         mWatchedMoviesRecyclerView.setLayoutManager(layoutManager);
     }
 
     private void showEmptyLayout() {
         mEmptyLayout.setVisibility(View.VISIBLE);
-        Toast.makeText(this, "Add watched movies!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.add_watched_tv_shows, Toast.LENGTH_SHORT).show();
     }
 }

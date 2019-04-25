@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
-import com.example.tomislavrajic.themoviedbsearch2.MoreInfoClickListener;
+import com.example.tomislavrajic.themoviedbsearch2.utils.MoreInfoClickListener;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.models.Result;
 import com.example.tomislavrajic.themoviedbsearch2.utils.OnBindClickListener;
@@ -26,12 +26,11 @@ import io.realm.RealmResults;
 
 public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    //region Fields
-    private static final int TYPE_BUTTON = 1;
     private static final int TYPE_ITEM = 0;
+    private static final int TYPE_BUTTON = 1;
 
+    //region Fields
     private boolean isMovie;
-
     private List<Result> resultList = new ArrayList<>(0);
     private RealmResults<Result> watchedMovies;
     private OnBindClickListener onBindClickListener;
@@ -63,7 +62,6 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder moviesViewHolder, int i) {
 
-        //TODO check does need isMovie
         if (isMovie) {
             if (moviesViewHolder instanceof MoviesViewHolder) {
 
@@ -72,13 +70,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 ((MoviesViewHolder) moviesViewHolder).watchedIcon.setOnClickListener(null);
 
                 setGenre((MoviesViewHolder) moviesViewHolder, i);
-
                 setPosterImage((MoviesViewHolder) moviesViewHolder, i);
-
-                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, "movie");
-
+                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, Result.MOVIE);
                 setButtonWatched(moviesViewHolder, i, true);
-
                 setFrame((MoviesViewHolder) moviesViewHolder);
 
             } else {
@@ -93,13 +87,9 @@ public class MoviesRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
                 ((MoviesViewHolder) moviesViewHolder).watchedIcon.setOnClickListener(null);
 
                 setGenre((MoviesViewHolder) moviesViewHolder, i);
-
                 setPosterImage((MoviesViewHolder) moviesViewHolder, i);
-
-                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, "tv");
-
+                setMoreInfoClickListener((MoviesViewHolder) moviesViewHolder, i, Result.TV_SHOW);
                 setButtonWatched(moviesViewHolder, i, false);
-
                 setFrame((MoviesViewHolder) moviesViewHolder);
 
             } else {
