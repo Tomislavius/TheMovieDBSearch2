@@ -1,6 +1,7 @@
 package com.example.tomislavrajic.themoviedbsearch2.fragments;
 
 import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.tomislavrajic.themoviedbsearch2.BuildConfig;
@@ -26,6 +27,10 @@ public class TVShowsTopRatedFragment extends TVShowsBaseFragment {
             @Override
             public void onResponse(@NonNull Call<TMDBResponseData> call, @NonNull Response<TMDBResponseData> response) {
                 if (response.isSuccessful()) {
+
+                    progressImage.setVisibility(View.GONE);
+                    recyclerView.setVisibility(View.VISIBLE);
+
                     moviesRecyclerViewAdapter.setData(response.body().getResults(), false);
                 } else {
                     try {

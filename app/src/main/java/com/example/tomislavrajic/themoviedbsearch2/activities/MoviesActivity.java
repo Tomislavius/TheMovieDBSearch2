@@ -13,6 +13,8 @@ public class MoviesActivity extends BaseActivity implements MoreInfoClickListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         MoviesFragmentPagerAdapter moviesFragmentPagerAdapter = new MoviesFragmentPagerAdapter(getSupportFragmentManager());
         mViewPager.setAdapter(moviesFragmentPagerAdapter);
         mTabLayout.setupWithViewPager(mViewPager);

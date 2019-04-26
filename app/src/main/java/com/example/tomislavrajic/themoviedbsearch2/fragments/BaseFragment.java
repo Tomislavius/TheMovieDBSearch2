@@ -11,8 +11,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.tomislavrajic.themoviedbsearch2.R;
 import com.example.tomislavrajic.themoviedbsearch2.activities.MoviesActivity;
 import com.example.tomislavrajic.themoviedbsearch2.activities.TVShowsActivity;
@@ -32,6 +34,9 @@ public abstract class BaseFragment extends Fragment implements OnBindClickListen
     int page;
     protected MoviesRecyclerViewAdapter moviesRecyclerViewAdapter;
     RecyclerView.LayoutManager layoutManager;
+
+    @BindView(R.id.progress_image_iv)
+    ImageView progressImage;
 
     @BindView(R.id.rv_movies)
     RecyclerView recyclerView;
@@ -55,6 +60,13 @@ public abstract class BaseFragment extends Fragment implements OnBindClickListen
         }
 
         recyclerView.setAdapter(moviesRecyclerViewAdapter);
+
+        recyclerView.setVisibility(View.INVISIBLE);
+        progressImage.setVisibility(View.VISIBLE);
+        Glide.with(this)
+                .asGif()
+                .load(R.drawable.tmdb)
+                .into(progressImage);
 
         setLayoutDependingOnOrientation();
 

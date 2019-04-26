@@ -33,7 +33,7 @@ public class BaseActivity extends AppCompatActivity implements MoreInfoDialog.On
     MoreInfoDialog moreInfoDialog;
     Result movieResult;
 
-    @BindView(R.id.test)
+    @BindView(R.id.tab_layout)
     TabLayout mTabLayout;
 
     @BindView(R.id.vp_top_rated)

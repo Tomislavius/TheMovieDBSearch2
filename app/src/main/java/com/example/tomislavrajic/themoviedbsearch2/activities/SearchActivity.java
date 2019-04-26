@@ -70,6 +70,7 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
     @OnClick(R.id.search_bt)
     void onSearchClicked() {
 
+        recyclerView.setVisibility(View.INVISIBLE);
         progressImage.setVisibility(View.VISIBLE);
 
         Glide.with(this)
@@ -123,6 +124,8 @@ public class SearchActivity extends AppCompatActivity implements MoreInfoClickLi
 
                 Utils.hideKeyboard(SearchActivity.this);
                 progressImage.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+
 
                 if (response.isSuccessful()) {
                     searchRecyclerViewAdapter.setData(response.body().getResults(), shouldClearData);
