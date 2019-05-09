@@ -12,7 +12,6 @@
         android:layout_height="300dp"
         android:layout_margin="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -24,35 +23,35 @@
         android:layout_marginEnd="8dp"
         android:textColor="#F5F5F5"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
+        app:layout_constraintStart_toEndOf="@id/iv_show_more_movie"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_person_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="2dp"
         android:layout_marginEnd="8dp"
         android:textAlignment="center"
         android:textColor="#F5F5F5"
         android:textSize="20sp"
         android:visibility="invisible"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/iv_show_more_movie"
+        app:layout_constraintStart_toStartOf="@id/iv_show_more_movie"
         app:layout_constraintTop_toBottomOf="@id/iv_show_more_movie" />
 
     <TextView
         android:id="@+id/tv_overview"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="8"
         android:padding="8dp"
         android:textColor="@color/colorText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_show_more_genre" />
+        app:layout_constraintStart_toEndOf="@id/iv_show_more_movie"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/constraintLayoutProgressBar" />
 
     <TextView
         android:id="@+id/user_score"
@@ -64,7 +63,7 @@
         android:textColor="@color/colorText"
         android:textStyle="bold"
         app:layout_constraintStart_toEndOf="@id/constraintLayoutProgressBar"
-        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title" />
+        app:layout_constraintTop_toBottomOf="@id/show_more_genre" />
 
     <TextView
         android:id="@+id/show_more_genre"
@@ -75,8 +74,8 @@
         android:text="@string/genre_title"
         android:textColor="#F5F5F5"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutProgressBar" />
+        app:layout_constraintStart_toEndOf="@id/iv_show_more_movie"
+        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title" />
 
     <TextView
         android:id="@+id/tv_show_more_genre"
@@ -87,7 +86,7 @@
         android:textColor="#F5F5F5"
         android:textSize="14sp"
         app:layout_constraintStart_toEndOf="@id/show_more_genre"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayoutProgressBar" />
+        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title" />
 
     <ImageButton
         android:id="@+id/ib_open_imdb"
@@ -99,7 +98,7 @@
         android:background="@drawable/imdb_button"
         android:scaleType="center"
         app:layout_constraintStart_toEndOf="@+id/user_score"
-        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title" />
+        app:layout_constraintTop_toBottomOf="@id/show_more_genre" />
 
     <ImageButton
         android:id="@+id/ib_open_tmdb"
@@ -110,7 +109,7 @@
         android:background="@drawable/tmdb_button"
         android:scaleType="center"
         app:layout_constraintStart_toEndOf="@id/ib_open_imdb"
-        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title" />
+        app:layout_constraintTop_toBottomOf="@id/show_more_genre" />
 
     <Button
         android:id="@+id/bt_dismiss"
@@ -118,7 +117,7 @@
         android:layout_height="30dp"
         android:layout_margin="8dp"
         android:background="@color/colorPrimaryDark"
-        android:text="@string/close_icon"
+        android:text="x"
         android:textColor="@color/colorText"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -129,8 +128,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_show_more_title">
+        app:layout_constraintStart_toEndOf="@id/iv_show_more_movie"
+        app:layout_constraintTop_toBottomOf="@id/show_more_genre">
 
         <ProgressBar
             android:id="@+id/background_progressbar_red"

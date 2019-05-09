@@ -1,19 +1,19 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.utils;
 
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedMoviesRecyclerViewAdapter;
+import com.example.tomislavrajic.themoviedbsearch2.adapters.WatchedItemsRecyclerViewAdapter;
 
 public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
 
-    private WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter;
+    private WatchedItemsRecyclerViewAdapter watchedItemsRecyclerViewAdapter;
 
-    SwipeToDeleteCallback(WatchedMoviesRecyclerViewAdapter watchedMoviesRecyclerViewAdapter) {
+    public SwipeToDeleteCallback(WatchedItemsRecyclerViewAdapter watchedItemsRecyclerViewAdapter) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
-        this.watchedMoviesRecyclerViewAdapter = watchedMoviesRecyclerViewAdapter;
+        this.watchedItemsRecyclerViewAdapter = watchedItemsRecyclerViewAdapter;
     }
 
     @Override
@@ -29,6 +29,6 @@ public class SwipeToDeleteCallback extends ItemTouchHelper.SimpleCallback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         int position = viewHolder.getAdapterPosition();
-        watchedMoviesRecyclerViewAdapter.deleteItem(position);
+        watchedItemsRecyclerViewAdapter.deleteItem(position);
     }
 }

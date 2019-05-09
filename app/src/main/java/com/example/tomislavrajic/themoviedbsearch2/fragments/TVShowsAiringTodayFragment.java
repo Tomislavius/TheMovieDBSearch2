@@ -17,13 +17,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MoviesUpcomingFragment extends MoviesBaseFragment {
+public class TVShowsAiringTodayFragment extends TVShowsBaseFragment {
 
     @Override
     protected void loadMovies() {
         TheMovieDBAPI service = ServiceGenerator.createService(TheMovieDBAPI.class);
 
-        service.getUpcomingMoviesResult(BuildConfig.API_KEY, page).enqueue(new Callback<TMDBResponseData>() {
+        service.getAiringTodayShowsResult(BuildConfig.API_KEY, page).enqueue(new Callback<TMDBResponseData>() {
             @Override
             public void onResponse(@NonNull Call<TMDBResponseData> call, @NonNull Response<TMDBResponseData> response) {
                 if (response.isSuccessful()) {
@@ -31,7 +31,7 @@ public class MoviesUpcomingFragment extends MoviesBaseFragment {
                     progressImage.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
 
-                    moviesRecyclerViewAdapter.setData(response.body().getResults(), true);
+                    moviesRecyclerViewAdapter.setData(response.body().getResults(), false);
                 } else {
                     try {
                         JSONObject jObjError = new JSONObject(response.errorBody().string());
