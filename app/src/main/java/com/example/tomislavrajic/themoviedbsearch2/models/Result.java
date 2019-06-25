@@ -1,15 +1,20 @@
 package com.example.tomislavrajic.themoviedbsearch2.models;
 
-import java.util.List;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
+import java.util.List;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class MoviesResult extends RealmObject {
+public class Result extends RealmObject implements Serializable {
+
+    public static final String MOVIE = "movie";
+    public static final String TV_SHOW = "tv";
+    public static final String PERSON = "person";
 
     //region Fields
     @SerializedName("vote_count")
@@ -32,6 +37,14 @@ public class MoviesResult extends RealmObject {
     @SerializedName("title")
     @Expose
     private String title;
+
+    @SerializedName("media_type")
+    @Expose
+    private String mediaType;
+
+    @SerializedName("name")
+    @Expose
+    private String name;
 
     @SerializedName("popularity")
     @Expose
@@ -69,9 +82,22 @@ public class MoviesResult extends RealmObject {
     @Expose
     private String releaseDate;
 
-    private boolean isChecked;
+    @SerializedName("first_air_date")
+    @Expose
+    private String firstAirDate;
+
+    @SerializedName("profile_path")
+    @Expose
+    private String profilePath;
+
+    @Expose(serialize = false, deserialize = false)
+    private Boolean isMovie;
+
+    @Expose(serialize = false, deserialize = false)
+    private Boolean isChecked;
     //endregion
 
+    //region Getters and Setters
     public String getTitle() {
         return title;
     }
@@ -81,7 +107,9 @@ public class MoviesResult extends RealmObject {
     }
 
     public String getReleaseDate() {
-        return "Year: " + releaseDate.substring(0, 4);
+        if (releaseDate.length() > 0) {
+            return "Year: " + releaseDate.substring(0, 4);
+        } else return "Unknown";
     }
 
     public List<Integer> getGenreIds() {
@@ -107,4 +135,31 @@ public class MoviesResult extends RealmObject {
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
+
+    public boolean isMovie() {
+        return isMovie;
+    }
+
+    public void setMovie(boolean movie) {
+        isMovie = movie;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getFirstAirDate() {
+        if (firstAirDate.length() > 0) {
+            return "Year: " + firstAirDate.substring(0, 4);
+        } else return "Unknown";
+    }
+
+    public String getProfilePath() {
+        return profilePath;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+    //endregion
 }

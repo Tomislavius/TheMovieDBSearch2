@@ -1,16 +1,18 @@
-package com.example.tomislavrajic.themoviedbsearch2;
+package com.example.tomislavrajic.themoviedbsearch2.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
+import com.example.tomislavrajic.themoviedbsearch2.R;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
-    //region Views
+    //region Fields
     @BindView(R.id.bt_movies)
     Button mButtonMovies;
 
@@ -33,6 +35,14 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        mButtonTVShows.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, TVShowsActivity.class);
+            startActivity(intent);
+        });
 
+        mButtonSearch.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+            startActivity(intent);
+        });
     }
 }

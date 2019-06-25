@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class ExternalID {
 
+    //region Fields
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -24,6 +25,7 @@ public class ExternalID {
     @SerializedName("twitter_id")
     @Expose
     private String twitterId;
+    //endregion
 
     public String getImdbId() {
         return imdbId;

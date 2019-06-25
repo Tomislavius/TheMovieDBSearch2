@@ -1,15 +1,24 @@
 <resources>
-    <string name="app_name">TheMovieDBSearch2</string>
+    <string name="app_name">TMDB SEARCH</string>
     <string name="movies">MOVIES</string>
-    <string name="tv_shows">TV SHOWS</string>
     <string name="more_info">MORE INFO</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="load_more">load more</string>
     <string name="watched_movies">Watched Movies</string>
     <string name="watched_tv_shows">Watched TV Shows</string>
-    <string name="no_movies_added_to_watched_list">NO MOVIES ADDED TO WATCHED LIST</string>
+    <string name="no_movies_added_to_watched_list">NO ITEMS ADDED TO WATCHED LIST</string>
     <string name="not_rated">NR</string>
-    <string name="no_genre">No genre!</string>
+    <string name="no_genre">No genre</string>
     <string name="genre_title">Genre:</string>
+    <string name="connection_error">Failed to connect!</string>
+    <string name="media_type">Media type:</string>
+    <string name="invalid_API">Invalid API key: You must be granted a valid key.</string>
+    <string name="invalid_request">The resource you requested could not be found.</string>
+    <string name="close_icon">x</string>
+    <string name="swipe_to_remove">Swipe to remove!</string>
+    <string name="add_watched_movies">Add watched movies!</string>
+    <string name="add_watched_tv_shows">Add watched TV Shows!</string>
+    <string name="item_added">Item added!</string>
+    <string name="item_removed">Item removed!</string>
+    <string name="search">SEARCH</string>
+    <string name="tv_shows">TV SHOWS</string>
 </resources>

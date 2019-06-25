@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,29 +18,29 @@
             android:layout_height="100dp"
             android:layout_margin="10dp"
             android:background="@drawable/movies"
-            android:text="MOVIES"
+            android:text="@string/movies"
             android:textColor="@color/colorText"
             android:textSize="48sp" />
 
         <Button
             android:id="@+id/bt_tv_shows"
-            android:layout_width="match_parent"
+            android:layout_width="400dp"
             android:layout_height="100dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/tv_shows"
-            android:text="TV SHOWS"
-            android:textColor="#808080"
+            android:text="@string/tv_shows"
+            android:textColor="@color/colorText"
             android:textSize="48sp" />
 
         <Button
             android:id="@+id/bt_search"
-            android:layout_width="match_parent"
+            android:layout_width="400dp"
             android:layout_height="100dp"
             android:layout_margin="10dp"
             android:background="@drawable/search"
-            android:text="SEARCH"
-            android:textColor="#808080"
+            android:text="@string/search"
+            android:textColor="@color/colorPrimaryDark"
             android:textSize="48sp" />
 
     </LinearLayout>
