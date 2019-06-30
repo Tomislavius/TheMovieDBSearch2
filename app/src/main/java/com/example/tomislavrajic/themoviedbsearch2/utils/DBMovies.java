@@ -7,7 +7,6 @@ import io.realm.RealmResults;
 
 public class DBMovies extends DBHelper {
 
-
     //region Fields
     private Realm realm;
     //endregion
